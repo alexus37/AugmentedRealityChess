@@ -1,0 +1,6 @@
+[submodule "kinect/SensorKinect"]
+	path = kinect/SensorKinect
+	url = git://github.com/ph4m/SensorKinect.git
+[submodule "kinect/OpenNI"]
+	path = kinect/OpenNI
+	url = git://github.com/OpenNI/OpenNI.git
