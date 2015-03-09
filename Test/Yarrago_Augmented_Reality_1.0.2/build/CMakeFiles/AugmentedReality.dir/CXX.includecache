@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ax/ownCloud/SS15/ETH/3DPhotography/AugmentedRealityChess/Test/Yarrago_Augmented_Reality_1.0.2/Source/AugmentedReality.cpp
+AugmentedReality.hpp
+/home/ax/ownCloud/SS15/ETH/3DPhotography/AugmentedRealityChess/Test/Yarrago_Augmented_Reality_1.0.2/Source/AugmentedReality.hpp
+
+/home/ax/ownCloud/SS15/ETH/3DPhotography/AugmentedRealityChess/Test/Yarrago_Augmented_Reality_1.0.2/Source/AugmentedReality.hpp
+opencv/cv.h
+/home/ax/ownCloud/SS15/ETH/3DPhotography/AugmentedRealityChess/Test/Yarrago_Augmented_Reality_1.0.2/Source/opencv/cv.h
+opencv/highgui.h
+/home/ax/ownCloud/SS15/ETH/3DPhotography/AugmentedRealityChess/Test/Yarrago_Augmented_Reality_1.0.2/Source/opencv/highgui.h
+GL/glut.h
+/home/ax/ownCloud/SS15/ETH/3DPhotography/AugmentedRealityChess/Test/Yarrago_Augmented_Reality_1.0.2/Source/GL/glut.h
+ctime
+-
+iostream
+-
+queue
+-
+vector
+-
+
