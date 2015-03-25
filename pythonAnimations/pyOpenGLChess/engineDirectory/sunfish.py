@@ -130,6 +130,51 @@ pst = {
 # Chess logic
 ###############################################################################
 
+class engineSunfish():
+    def __init__(self):
+        self.crdn = ""
+        self.newMove = False;
+        self.pos = Position(initial, 0, (True,True), (True,True), 0, 0)
+        print(' '.join(self.pos.board))
+
+    def setMove(self, curMove):
+        
+        self.crdn = curMove
+        self.newMove = True
+        move = None
+        while move not in self.pos.genMoves():                
+            try:
+                move = parse(self.crdn[0:2]), parse(self.crdn[2:4])
+            except ValueError:
+              # Inform the user when invalid input (e.g. "help") is entered
+                print("Invalid input. Please enter a move in the proper format (e.g. g8f6)")
+
+        self.pos = self.pos.move(move)
+        print(' '.join(self.pos.rotate().board))
+
+
+    def computeNextStep(self):
+        
+        move, score = search(self.pos)
+        if score <= -MATE_VALUE:
+            print("You won")
+
+        if score >= MATE_VALUE:
+            print("You lost")
+
+        # The black player moves from a rotated position, so we have to
+        # 'back rotate' the move before printing it.
+        myMove = render(119-move[0]) + render(119-move[1])
+        print ("My move: " + myMove)
+        
+        self.pos = self.pos.move(move)
+        
+        print(' '.join(self.pos.board))
+
+        return myMove
+
+
+
 class Position(namedtuple('Position', 'board score wc bc ep kp')):
     """ A state of a chess game
     board -- a 120 char representation of the board

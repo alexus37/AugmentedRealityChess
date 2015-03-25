@@ -1,0 +1,58 @@
+dependencies
+------------
+
+For starting the game you need:
+  - Python 2.2 or higher
+  - OpenGL GL, GLU and GLUT libraries
+
+
+
+Starting the game
+-----------------
+
+Type "python2.2 play.py" in this directory.
+
+
+
+How to handle the game
+--------------------
+
+You play with the mouse as follows:
+  - Use the left mouse button to choose a block on the board.
+  - Hold the right mouse button down and move the mouse to rotate the board.
+  - Use the middle mouse button to get a menu. 
+
+You can use the keyboard instead of the menu (i.e. if you don't have three mouse buttons) as follows:
+  - Press 'escape' to quit the game.
+  - Press 'u' to unto the last move of the game. 
+  - Press 'a' to enable or disable an animation mode.
+  - Press 's' to enable or disable the shadows of the pieces.
+
+  
+
+developer information
+---------------------
+
+This game is written in python with use of the OpenGL libraries GL, GLU and GLUT. 
+Feel free to modify or extend it since you don't take money for it.
+Please contact me (see below) if you develop a new feature or modification for this game. 
+Ask me for a todo list if you are interested to improve this game and don't know where to start.
+
+
+
+copyright
+---------
+
+This software is released under the GPL.
+See http://www.gnu.org/copyleft/gpl.html for details.
+
+
+
+contact information
+-------------------
+
+Author:   David Brechtel
+email:    davidbrechtel@web.de
+Homepage: http://freshmeat.net/~gothicchrist/
+
+
