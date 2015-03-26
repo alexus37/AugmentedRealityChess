@@ -35,6 +35,7 @@ class Game:
         # init the engine
         self.sunfish = engineSunfish()
 
+        self.zoom = 45.0
         self.button = None
         self.chosenBlock = [-1, -1]
         self.mouse = [0.0, 0.0]
@@ -43,15 +44,25 @@ class Game:
 
         self.light = [1.6, 1.3, 7, 0.8]  # light position
         epsilon = -0.02
-        self.matrixForShadow = (
-        epsilon + self.light[2], 0, 0, 0, 0, epsilon + self.light[2], 0, 0, -self.light[0], -self.light[1], epsilon, -1,
-        -epsilon * self.light[0], -epsilon * self.light[1], -epsilon * self.light[2], self.light[2])
+        self.matrixForShadow = (epsilon + self.light[2], 0, 0, 0, 0, epsilon + self.light[2], 0, 0, -self.light[0], -self.light[1], epsilon, -1, -epsilon * self.light[0], -epsilon * self.light[1], -epsilon * self.light[2], self.light[2])
+
+        self.pawns = []
+        self.rooks = []
+        self.knights = []
+        self.bishops = []
+        self.queens = []
+        self.kings = []
+        self.height = 0
+        self.width = 0
 
         self.array = {'Piece': {}, 'Piece': {}}
 
         self.clickedCoordinates = (-10.0, -10.0, -10.0)
 
     def init(self, width, height):
+
+        self.height = height
+        self.width = width
         # specify clear values for the color buffers
         glClearColor(0.4, 0.4, 0.4, 0.0)
 
@@ -154,7 +165,7 @@ class Game:
         glEndList()
 
         # create a pawn ()
-        # TODO: change to loading from model
+        # TODO: change to loading from model (all)
         temp = Pawn.Pawn(black, -1, -1)
         glNewList(drawBlackPawn, GL_COMPILE_AND_EXECUTE)
         temp.drawMe(normal)
@@ -215,21 +226,22 @@ class Game:
         temp.drawMe(normal)
         glEndList()
 
+        # add all objects to the board (Black)
         glNewList(pieceChangeChoiceBlack, GL_COMPILE_AND_EXECUTE)
         self.drawPieceChoiceCallListBlack()
         glEndList()
 
+        # add all objects to the board (White)
         glNewList(pieceChangeChoiceWhite, GL_COMPILE_AND_EXECUTE)
         self.drawPieceChoiceCallListWhite()
         glEndList()
 
         self.reshape(width, height)
 
-
     def drawPieceChoiceCallListBlack(self):
         glDisable(GL_COLOR_MATERIAL)
         glColor3d(0.15, 0.5, 0.45)
-        # glMaterialfv(GL_FRONT, GL_SHININESS, 1.0)
+
         glMaterialfv(GL_FRONT, GL_AMBIENT, [0.15, 0.5, 0.35, 0])
         glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.0, 0.0, 0.0, 0])
         glMaterialfv(GL_FRONT, GL_SPECULAR, [0, 0, 0, 0])
@@ -266,23 +278,22 @@ class Game:
         glCallList(drawBlackQueen)
         glPopMatrix()
         glPushMatrix()
-        glTranslatef((0.5) * blockSize, 1.5 * blockSize, 0)
+        glTranslatef(0.5 * blockSize, 1.5 * blockSize, 0)
         glCallList(drawBlackBishop)
         glPopMatrix()
         glPushMatrix()
-        glTranslatef((1.5) * blockSize, 1.5 * blockSize, 0)
+        glTranslatef(1.5 * blockSize, 1.5 * blockSize, 0)
         glCallList(drawBlackKnight)
         glPopMatrix()
         glPushMatrix()
-        glTranslatef((2.5) * blockSize, 1.5 * blockSize, 0)
+        glTranslatef(2.5 * blockSize, 1.5 * blockSize, 0)
         glCallList(drawBlackRook)
         glPopMatrix()
-
 
     def drawPieceChoiceCallListWhite(self):
         glDisable(GL_COLOR_MATERIAL)
         glColor3d(0.15, 0.5, 0.45)
-        # glMaterialfv(GL_FRONT, GL_SHININESS, 1.0)
+
         glMaterialfv(GL_FRONT, GL_AMBIENT, [0.15, 0.5, 0.35, 0])
         glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.0, 0.0, 0.0, 0])
         glMaterialfv(GL_FRONT, GL_SPECULAR, [0, 0, 0, 0])
@@ -319,15 +330,15 @@ class Game:
         glCallList(drawWhiteQueen)
         glPopMatrix()
         glPushMatrix()
-        glTranslatef((0.5) * blockSize, 1.5 * blockSize, 0)
+        glTranslatef(0.5 * blockSize, 1.5 * blockSize, 0)
         glCallList(drawWhiteBishop)
         glPopMatrix()
         glPushMatrix()
-        glTranslatef((1.5) * blockSize, 1.5 * blockSize, 0)
+        glTranslatef(1.5 * blockSize, 1.5 * blockSize, 0)
         glCallList(drawWhiteKnight)
         glPopMatrix()
         glPushMatrix()
-        glTranslatef((2.5) * blockSize, 1.5 * blockSize, 0)
+        glTranslatef(2.5 * blockSize, 1.5 * blockSize, 0)
         glCallList(drawWhiteRook)
         glPopMatrix()
 
@@ -347,7 +358,6 @@ class Game:
                 glCallList(pieceChangeChoiceBlack)
             glPopMatrix()
 
-
     def initPieces(self):
         for i in range(-1, 10):
             for j in range(-1, 10):
@@ -356,11 +366,11 @@ class Game:
         for i in range(0, 8):
             self.pawns.append(Pawn.Pawn(white, i + 1, 2))
             self.array[i + 1, 2] = self.pawns[i]
-        #black pawns:
+        # black pawns:
         for i in range(8, 16):
             self.pawns.append(Pawn.Pawn(black, i - 7, 7))
             self.array[i - 7, 7] = self.pawns[i]
-        #rooks
+        # rooks
         self.rooks.append(Rook.Rook(white, 1, 1))
         self.array[1, 1] = self.rooks[0]
         self.rooks.append(Rook.Rook(white, 8, 1))
@@ -370,7 +380,7 @@ class Game:
         self.rooks.append(Rook.Rook(black, 8, 8))
         self.array[8, 8] = self.rooks[3]
 
-        #knights
+        # knights
         self.knights.append(Knight.Knight(white, 2, 1))
         self.array[2, 1] = self.knights[0]
         self.knights.append(Knight.Knight(white, 7, 1))
@@ -380,7 +390,7 @@ class Game:
         self.knights.append(Knight.Knight(black, 7, 8))
         self.array[7, 8] = self.knights[3]
 
-        #bishops
+        # bishops
         self.bishops.append(Bishop.Bishop(white, 3, 1))
         self.array[3, 1] = self.bishops[0]
         self.bishops.append(Bishop.Bishop(white, 6, 1))
@@ -390,27 +400,44 @@ class Game:
         self.bishops.append(Bishop.Bishop(black, 6, 8))
         self.array[6, 8] = self.bishops[3]
 
-        #queens
+        # queens
         self.queens.append(Queen.Queen(white, 4, 1))
         self.array[4, 1] = self.queens[0]
         self.queens.append(Queen.Queen(black, 4, 8))
         self.array[4, 8] = self.queens[1]
 
-        #kings
+        # kings
         self.kings.append(King.King(white, 5, 1))
         self.array[5, 1] = self.kings[0]
         self.kings.append(King.King(black, 5, 8))
         self.array[5, 8] = self.kings[1]
 
-
-    def reshape(self, width, height):
+    @staticmethod
+    def reshape(width, height):
+        #  set the view port with low left corner and width and height
         glViewport(0, 0, width, height)
+
+        # specify which matrix is the current matrix
+        # GL_PROJECTION : Applies subsequent matrix operations to the projection matrix stack
         glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(45.0, width / height, 0.1, 100.0)
-        glMatrixMode(GL_MODELVIEW)
+
+        # replace the current matrix with the identity matrix
         glLoadIdentity()
 
+        # set up a perspective projection matrix
+        # Specifies the field of view angle, in degrees, in the y direction
+        # Specifies the aspect ratio that determines the field of view in the
+        # x direction. The aspect ratio is the ratio of x (width) to y (height).
+        # Specifies the distance from the viewer to the near clipping plane (always positive)
+        # Specifies the distance from the viewer to the far clipping plane (always positive)
+
+        gluPerspective(45.0, width / height, 0.1, 100.0)
+
+        # GL_MODELVIEW : Applies subsequent matrix operations to the modelview matrix stack
+        glMatrixMode(GL_MODELVIEW)
+
+        # replace the current matrix with the identity matrix
+        glLoadIdentity()
 
     def redraw(self):
         self.beginRedraw()
@@ -418,8 +445,8 @@ class Game:
         self.drawBoardTop()
 
         glCallList(drawBorder)
-        if (self.pieceChange == true):
-            self.drawPieceChoice()
+        # if self.pieceChange == true:
+        #    self.drawPieceChoice()
         self.endRedraw()
 
 
@@ -465,7 +492,7 @@ class Game:
     def endRedraw(self):
         glEnable(GL_COLOR_MATERIAL)
         glPushMatrix()
-        glMultMatrixd(self.matrixForSchadow)
+        glMultMatrixd(self.matrixForShadow)
 
         glStencilFunc(GL_EQUAL, 1, 0x1)
         glStencilOp(GL_KEEP, GL_KEEP, GL_INCR)
@@ -545,6 +572,27 @@ class Game:
         if (button == GLUT_RIGHT_BUTTON) and (state == GLUT_DOWN):
             self.mouse[0] = x
             self.mouse[1] = y
+
+        # handle scroll event
+        elif button == 3 or button == 4:
+            if state == GLUT_UP:
+                return
+
+            if button == 3:
+                self.zoom += 1
+                glMatrixMode(GL_PROJECTION)
+                glLoadIdentity()
+                gluPerspective(self.zoom, self.width / self.height, 0.1, 100.0)
+                glMatrixMode(GL_MODELVIEW)
+                self.redraw()
+            else:
+                self.zoom -= 1
+                glMatrixMode(GL_PROJECTION)
+                glLoadIdentity()
+                gluPerspective(self.zoom, self.width / self.height, 0.1, 100.0)
+                glMatrixMode(GL_MODELVIEW)
+                self.redraw()
+
 
         elif (button == GLUT_LEFT_BUTTON) and (state == GLUT_UP):
             model = glGetDoublev(GL_MODELVIEW_MATRIX)
@@ -1098,72 +1146,71 @@ class Game:
             self.toggleTurn()
             self.checkForCheck()
 
+    def drawBoardBottom(self):
+        # set the color
+        glColor3d(0.8, 0.9, 0.5)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, [0.4, 0.4, 0.5, 0])
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.5, 0.5, 0.5, 0])
+        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.0, 0])
 
-        def drawBoardBottom(self):
-            # set the color
-            glColor3d(0.8, 0.9, 0.5)
-            glMaterialfv(GL_FRONT, GL_AMBIENT, [0.4, 0.4, 0.5, 0])
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.5, 0.5, 0.5, 0])
-            glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.0, 0])
 
+        # board bottom
+        glBegin(GL_POLYGON)
+        glNormal3d(0, 0, -1)
+        glVertex3f(-4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
+        glNormal3d(0, 0, -1)
+        glVertex3f(-4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
+        glNormal3d(0, 0, -1)
+        glVertex3f(4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
+        glNormal3d(0, 0, -1)
+        glVertex3f(4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
+        glEnd()
 
-            # board bottom
-            glBegin(GL_POLYGON)
-            glNormal3d(0, 0, -1)
-            glVertex3f(-4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
-            glNormal3d(0, 0, -1)
-            glVertex3f(-4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
-            glNormal3d(0, 0, -1)
-            glVertex3f(4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
-            glNormal3d(0, 0, -1)
-            glVertex3f(4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
-            glEnd()
+        # board sides:
+        # glColor3d(0.3,0.1,0.5)
+        glBegin(GL_POLYGON)
+        glNormal3d(-1, 0, 0)
+        glVertex3f(-4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
+        glNormal3d(-1, 0, 0)
+        glVertex3f(-4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
+        glNormal3d(-1, 0, 0)
+        glVertex3f(-4.5 * blockSize, 4.5 * blockSize, 0)
+        glNormal3d(-1, 0, 0)
+        glVertex3f(-4.5 * blockSize, -4.5 * blockSize, 0)
+        glEnd()
 
-            # board sides:
-            # glColor3d(0.3,0.1,0.5)
-            glBegin(GL_POLYGON)
-            glNormal3d(-1, 0, 0)
-            glVertex3f(-4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
-            glNormal3d(-1, 0, 0)
-            glVertex3f(-4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
-            glNormal3d(-1, 0, 0)
-            glVertex3f(-4.5 * blockSize, 4.5 * blockSize, 0)
-            glNormal3d(-1, 0, 0)
-            glVertex3f(-4.5 * blockSize, -4.5 * blockSize, 0)
-            glEnd()
+        glBegin(GL_POLYGON)
+        glNormal3d(1, 0, 0)
+        glVertex3f(4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
+        glNormal3d(1, 0, 0)
+        glVertex3f(4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
+        glNormal3d(1, 0, 0)
+        glVertex3f(4.5 * blockSize, -4.5 * blockSize, 0)
+        glNormal3d(1, 0, 0)
+        glVertex3f(4.5 * blockSize, 4.5 * blockSize, 0)
+        glEnd()
 
-            glBegin(GL_POLYGON)
-            glNormal3d(1, 0, 0)
-            glVertex3f(4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
-            glNormal3d(1, 0, 0)
-            glVertex3f(4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
-            glNormal3d(1, 0, 0)
-            glVertex3f(4.5 * blockSize, -4.5 * blockSize, 0)
-            glNormal3d(1, 0, 0)
-            glVertex3f(4.5 * blockSize, 4.5 * blockSize, 0)
-            glEnd()
+        glBegin(GL_POLYGON)
+        glNormal3d(0, 1, 0)
+        glVertex3f(-4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
+        glNormal3d(0, 1, 0)
+        glVertex3f(4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
+        glNormal3d(0, 1, 0)
+        glVertex3f(4.5 * blockSize, 4.5 * blockSize, 0)
+        glNormal3d(0, 1, 0)
+        glVertex3f(-4.5 * blockSize, 4.5 * blockSize, 0)
+        glEnd()
 
-            glBegin(GL_POLYGON)
-            glNormal3d(0, 1, 0)
-            glVertex3f(-4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
-            glNormal3d(0, 1, 0)
-            glVertex3f(4.5 * blockSize, 4.5 * blockSize, -blockSize / 2)
-            glNormal3d(0, 1, 0)
-            glVertex3f(4.5 * blockSize, 4.5 * blockSize, 0)
-            glNormal3d(0, 1, 0)
-            glVertex3f(-4.5 * blockSize, 4.5 * blockSize, 0)
-            glEnd()
-
-            glBegin(GL_POLYGON)
-            glNormal3d(0, -1, 0)
-            glVertex3f(-4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
-            glNormal3d(0, -1, 0)
-            glVertex3f(4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
-            glNormal3d(0, -1, 0)
-            glVertex3f(4.5 * blockSize, -4.5 * blockSize, 0)
-            glNormal3d(0, -1, 0)
-            glVertex3f(-4.5 * blockSize, -4.5 * blockSize, 0)
-            glEnd()
+        glBegin(GL_POLYGON)
+        glNormal3d(0, -1, 0)
+        glVertex3f(-4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
+        glNormal3d(0, -1, 0)
+        glVertex3f(4.5 * blockSize, -4.5 * blockSize, -blockSize / 2)
+        glNormal3d(0, -1, 0)
+        glVertex3f(4.5 * blockSize, -4.5 * blockSize, 0)
+        glNormal3d(0, -1, 0)
+        glVertex3f(-4.5 * blockSize, -4.5 * blockSize, 0)
+        glEnd()
 
 
     def myKing(self):
@@ -1235,8 +1282,9 @@ class Game:
             self.array[newX, newY].kill()
         self.array[newX, newY] = self.activePiece
 
-
+    # TODO: check out how to handle a click
     def handleClick(self):
+        return ""
         curMove = ""
         if (self.pieceChange):
             if (self.activePiece != None):
@@ -1498,7 +1546,7 @@ class Game:
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL)  # GLUT_ALPHA missing
         glutInitWindowPosition(20, 20)
         glutInitWindowSize(600, 500)
-        glutCreateWindow("Chess3D")
+        glutCreateWindow("Augmented Reality Chess")
 
         glutDisplayFunc(self.redraw)
         glutReshapeFunc(self.reshape)
