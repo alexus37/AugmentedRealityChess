@@ -15,20 +15,27 @@ class Queen(Piece.Piece):
     def __init__(self, c, x, y, useobj):
         if c == objWhite:
             Piece.Piece.__init__(self, queen, white, x, y)
+        elif c == objBlack:
+            Piece.Piece.__init__(self, queen, black, x, y)
         else:
             Piece.Piece.__init__(self, queen, c, x, y)
+
         self.height1 = 4.7
         self.radius1 = 0.5
         self.headRadius = 1.9
         self.crownDepth = (3/4)*self.headRadius
         self.crownHeight = 1.6
         self.crownRadius = 1.9
-        self.objFilePath = "Queen.obj"
+
+        self.objFilePath = "obj/Queen.obj"
         self.useObj = useobj
         self.obj = None
 
-        if self.useObj and c == objWhite:
-            self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawWhiteQueenObj)
+        if self.useObj:
+            if c == objWhite:
+                self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawWhiteQueenObj)
+            else:
+                self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawBlackQueenObj)
 
     def draw(self):
         if self.life == alive:
@@ -39,7 +46,7 @@ class Queen(Piece.Piece):
                     glCallList(drawWhiteQueen)
                 elif self.color == black and not self.useObj:
                     glCallList(drawBlackQueen)
-                elif self.color == white and self.useObj:
+                elif self.useObj:
                     glScalef(0.04, 0.04, 0.04)
                     set_color(self.color, normal)
                     glCallList(self.obj.gl_list)

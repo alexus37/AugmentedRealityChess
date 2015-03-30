@@ -59,8 +59,19 @@ changePawnOn = 55
 kingFirstMove = 56
 
 # obj defines
+drawBlackPawnObj = 65
+drawWhitePawnObj = 66
+drawBlackRookObj = 67
+drawWhiteRookObj = 68
+drawBlackKnightObj = 69
+drawWhiteKnightObj = 70
+drawBlackBishopObj = 71
+drawWhiteBishopObj = 72
 drawBlackQueenObj = 73
 drawWhiteQueenObj = 74
+drawBlackKingObj = 75
+drawWhiteKingObj = 76
+
 # for game:
 blockSize = 0.7
 standardFactor = (blockSize/5.6)*6/7

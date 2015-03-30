@@ -1,10 +1,10 @@
 import pygame
 from OpenGL.GL import *
 
-def MTL(filename):
+def MTL(filename, path):
     contents = {}
     mtl = None
-    for line in open(filename, "r"):
+    for line in open(path + filename, "r"):
         if line.startswith('#'): continue
         values = line.split()
         if not values: continue
@@ -15,7 +15,7 @@ def MTL(filename):
         elif values[0] == 'map_Kd':
             # load the texture referred to by this declaration
             mtl[values[0]] = values[1]
-            surf = pygame.image.load(mtl['map_Kd'])
+            surf = pygame.image.load(path + mtl['map_Kd'])
             image = pygame.image.tostring(surf, 'RGBA', 1)
             ix, iy = surf.get_rect().size
             texid = mtl['texture_Kd'] = glGenTextures(1)
@@ -40,6 +40,11 @@ class OBJ:
         self.gl_list = listindex
 
         material = None
+        if '/' in filename:
+            path = filename[:filename.rfind('/') + 1]
+        else:
+            path = ""
+
         for line in open(filename, "r"):
             if line.startswith('#'): continue
             values = line.split()
@@ -59,7 +64,7 @@ class OBJ:
             elif values[0] in ('usemtl', 'usemat'):
                 material = values[1]
             elif values[0] == 'mtllib':
-                self.mtl = MTL(values[1])
+                self.mtl = MTL(values[1], path)
             elif values[0] == 'f':
                 face = []
                 texcoords = []

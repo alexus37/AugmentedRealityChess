@@ -3,6 +3,8 @@
     <words>
       <w>anim</w>
       <w>coords</w>
+      <w>crdn</w>
+      <w>keychache</w>
       <w>modelview</w>
       <w>proj</w>
       <w>redrw</w>

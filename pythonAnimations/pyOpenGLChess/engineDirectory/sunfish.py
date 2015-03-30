@@ -130,6 +130,7 @@ pst = {
 # Chess logic
 ###############################################################################
 
+# noinspection PyPep8Naming
 class engineSunfish():
     def __init__(self):
         self.crdn = ""
@@ -142,19 +143,21 @@ class engineSunfish():
         self.crdn = curMove
         self.newMove = True
         move = None
-        while move not in self.pos.genMoves():                
-            try:
-                move = parse(self.crdn[0:2]), parse(self.crdn[2:4])
-            except ValueError:
-              # Inform the user when invalid input (e.g. "help") is entered
-                print("Invalid input. Please enter a move in the proper format (e.g. g8f6)")
+
+        try:
+            move = parse(self.crdn[0:2]), parse(self.crdn[2:4])
+        except ValueError:
+            # Inform the user when invalid input (e.g. "help") is entered
+            print("Invalid input. Please enter a move in the proper format (e.g. g8f6)")
+            return False
+        if move not in self.pos.genMoves():
+            return False
 
         self.pos = self.pos.move(move)
         print(' '.join(self.pos.rotate().board))
-
+        return True
 
     def computeNextStep(self):
-        
         move, score = search(self.pos)
         if score <= -MATE_VALUE:
             print("You won")
@@ -165,14 +168,13 @@ class engineSunfish():
         # The black player moves from a rotated position, so we have to
         # 'back rotate' the move before printing it.
         myMove = render(119-move[0]) + render(119-move[1])
-        print ("My move: " + myMove)
+        print ("Engine move: " + myMove)
         
         self.pos = self.pos.move(move)
         
         print(' '.join(self.pos.board))
 
         return myMove
-
 
 
 class Position(namedtuple('Position', 'board score wc bc ep kp')):
