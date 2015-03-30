@@ -28,14 +28,15 @@ class King(Piece.Piece):
         self.crownRadius = 1.9
         self.eyes = true
 
-        self.objFilePath = "obj/King.obj"
         self.useObj = useobj
         self.obj = None
 
         if self.useObj:
             if c == objWhite:
+                self.objFilePath = "obj/KingWhite.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawWhiteKingObj)
             else:
+                self.objFilePath = "obj/KingBlack.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawBlackKingObj)
 
     def draw(self):

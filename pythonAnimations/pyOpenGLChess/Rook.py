@@ -28,14 +28,15 @@ class Rook(Piece.Piece):
         self.crownHeight = 1.7
         self.crownRadius = 1.85
 
-        self.objFilePath = "obj/Rook.obj"
         self.useObj = useobj
         self.obj = None
 
         if self.useObj:
             if c == objWhite:
+                self.objFilePath = "obj/RookWhite.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawWhiteRookObj)
             else:
+                self.objFilePath = "obj/RookBlack.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawBlackRookObj)
 
     def draw(self):

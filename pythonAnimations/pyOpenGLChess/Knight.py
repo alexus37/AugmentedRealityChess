@@ -30,8 +30,10 @@ class Knight(Piece.Piece):
 
         if self.useObj:
             if c == objWhite:
+                self.objFilePath = "obj/KnightWhite.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawWhiteKnightObj)
             else:
+                self.objFilePath = "obj/KnightBlack.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawBlackKnightObj)
 
     def draw(self):

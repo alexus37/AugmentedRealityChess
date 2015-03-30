@@ -30,14 +30,15 @@ class Bishop(Piece.Piece):
         self.height4 = 0.6
         self.height5 = 1.6
 
-        self.objFilePath = "obj/Bishop.obj"
         self.useObj = useobj
         self.obj = None
 
-        if self.useObj :
+        if self.useObj:
             if c == objWhite:
+                self.objFilePath = "obj/BishopWhite.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawWhiteBishopObj)
             else:
+                self.objFilePath = "obj/BishopBlack.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawBlackBishopObj)
 
     def draw(self):

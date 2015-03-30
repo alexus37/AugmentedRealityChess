@@ -34,8 +34,10 @@ class Pawn(Piece.Piece):
 
         if self.useObj:
             if c == objWhite:
+                self.objFilePath = "obj/PawnWhite.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawWhitePawnObj)
             else:
+                self.objFilePath = "obj/PawnBlack.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawBlackPawnObj)
 
     def draw(self):

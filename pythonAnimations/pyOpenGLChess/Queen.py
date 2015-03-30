@@ -27,14 +27,15 @@ class Queen(Piece.Piece):
         self.crownHeight = 1.6
         self.crownRadius = 1.9
 
-        self.objFilePath = "obj/Queen.obj"
         self.useObj = useobj
         self.obj = None
 
         if self.useObj:
             if c == objWhite:
+                self.objFilePath = "obj/QueenWhite.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawWhiteQueenObj)
             else:
+                self.objFilePath = "obj/QueenBlack.obj"
                 self.obj = OBJ(self.objFilePath, swapyz=True, listindex=drawBlackQueenObj)
 
     def draw(self):

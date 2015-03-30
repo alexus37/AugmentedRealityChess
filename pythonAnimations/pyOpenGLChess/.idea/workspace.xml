@@ -2,21 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="910dfb87-33c7-4cc4-98fa-4770687264aa" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Queen.mtl" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Wood.jpg" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/obj/Bishop.mtl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/obj/King.mtl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/obj/Knight.mtl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/obj/Pawn.mtl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/obj/Queen.mtl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/obj/Rook.mtl" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../kinect/OpenNI" afterPath="$PROJECT_DIR$/../../kinect/OpenNI" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obj/Rust.jpg" afterPath="$PROJECT_DIR$/obj/Rust.jpg" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Bishop.py" afterPath="$PROJECT_DIR$/Bishop.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameNoLogic.py" afterPath="$PROJECT_DIR$/GameNoLogic.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/King.py" afterPath="$PROJECT_DIR$/King.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Knight.py" afterPath="$PROJECT_DIR$/Knight.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pawn.py" afterPath="$PROJECT_DIR$/Pawn.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Queen.py" afterPath="$PROJECT_DIR$/Queen.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rook.py" afterPath="$PROJECT_DIR$/Rook.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/ax.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/ax.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/defines.py" afterPath="$PROJECT_DIR$/defines.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/objloader.py" afterPath="$PROJECT_DIR$/objloader.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/engineDirectory/sunfish.py" afterPath="$PROJECT_DIR$/engineDirectory/sunfish.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="pyOpenGLChess.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -80,8 +79,8 @@
           <file leaf-file-name="Bishop.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Bishop.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="486" max-vertical-offset="1584">
-                  <caret line="51" column="20" selection-start-line="51" selection-start-column="20" selection-end-line="51" selection-end-column="20" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="414" max-vertical-offset="1602">
+                  <caret line="40" column="51" selection-start-line="40" selection-start-column="51" selection-end-line="40" selection-end-column="51" />
                   <folding>
                     <element signature="e#23#54#0" expanded="true" />
                   </folding>
@@ -92,8 +91,8 @@
           <file leaf-file-name="King.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/King.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1422">
-                  <caret line="49" column="21" selection-start-line="49" selection-start-column="21" selection-end-line="49" selection-end-column="21" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1440">
+                  <caret line="38" column="49" selection-start-line="38" selection-start-column="49" selection-end-line="38" selection-end-column="49" />
                   <folding>
                     <element signature="e#11#42#0" expanded="true" />
                   </folding>
@@ -104,8 +103,8 @@
           <file leaf-file-name="Knight.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Knight.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="6786">
-                  <caret line="44" column="46" selection-start-line="44" selection-start-column="46" selection-end-line="44" selection-end-column="46" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="6822">
+                  <caret line="35" column="51" selection-start-line="35" selection-start-column="51" selection-end-line="35" selection-end-column="51" />
                   <folding>
                     <element signature="e#32#63#0" expanded="true" />
                   </folding>
@@ -113,11 +112,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Pawn.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="Pawn.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Pawn.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.42580646" vertical-offset="216" max-vertical-offset="1530">
-                  <caret line="34" column="18" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="18" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="1566">
+                  <caret line="39" column="45" selection-start-line="39" selection-start-column="45" selection-end-line="39" selection-end-column="45" />
                   <folding>
                     <element signature="e#19#50#0" expanded="true" />
                   </folding>
@@ -125,11 +124,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Rook.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="Rook.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/Rook.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="528" max-vertical-offset="1458">
-                  <caret line="48" column="44" selection-start-line="48" selection-start-column="44" selection-end-line="48" selection-end-column="44" />
+                <state vertical-scroll-proportion="0.1308615" vertical-offset="402" max-vertical-offset="1476">
+                  <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
                   <folding>
                     <element signature="e#18#49#0" expanded="true" />
                   </folding>
@@ -176,9 +175,11 @@
           <file leaf-file-name="Queen.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/Queen.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.15483871" vertical-offset="0" max-vertical-offset="1422">
-                  <caret line="8" column="16" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
-                  <folding />
+                <state vertical-scroll-proportion="0.49073064" vertical-offset="216" max-vertical-offset="1440">
+                  <caret line="37" column="50" selection-start-line="37" selection-start-column="50" selection-end-line="37" selection-end-column="50" />
+                  <folding>
+                    <element signature="e#12#43#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -211,13 +212,13 @@
         <option value="$PROJECT_DIR$/engineDirectory/sunfish.py" />
         <option value="$PROJECT_DIR$/objloader.py" />
         <option value="$PROJECT_DIR$/defines.py" />
+        <option value="$PROJECT_DIR$/GameNoLogic.py" />
         <option value="$PROJECT_DIR$/Queen.py" />
+        <option value="$PROJECT_DIR$/Pawn.py" />
+        <option value="$PROJECT_DIR$/Knight.py" />
         <option value="$PROJECT_DIR$/King.py" />
         <option value="$PROJECT_DIR$/Bishop.py" />
         <option value="$PROJECT_DIR$/Rook.py" />
-        <option value="$PROJECT_DIR$/Pawn.py" />
-        <option value="$PROJECT_DIR$/Knight.py" />
-        <option value="$PROJECT_DIR$/GameNoLogic.py" />
       </list>
     </option>
   </component>
@@ -519,7 +520,7 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34104937" sideWeight="0.4996277" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24963397" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.17606747" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17606747" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3865717" sideWeight="0.72113866" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.10783316" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -644,7 +645,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1386">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#12#43#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -690,7 +693,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="326" max-vertical-offset="1278">
           <caret line="26" column="68" selection-start-line="26" selection-start-column="68" selection-end-line="26" selection-end-column="68" />
-          <folding />
+          <folding>
+            <element signature="e#12#43#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -935,54 +940,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Rook.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="438" max-vertical-offset="1458">
-          <caret line="48" column="44" selection-start-line="48" selection-start-column="44" selection-end-line="48" selection-end-column="44" />
-          <folding>
-            <element signature="e#18#49#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Queen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.15483871" vertical-offset="0" max-vertical-offset="1422">
-          <caret line="8" column="16" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Knight.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="6786">
-          <caret line="44" column="46" selection-start-line="44" selection-start-column="46" selection-end-line="44" selection-end-column="46" />
-          <folding>
-            <element signature="e#32#63#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/King.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="324" max-vertical-offset="1422">
-          <caret line="49" column="21" selection-start-line="49" selection-start-column="21" selection-end-line="49" selection-end-column="21" />
-          <folding>
-            <element signature="e#11#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Bishop.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="486" max-vertical-offset="1584">
-          <caret line="51" column="20" selection-start-line="51" selection-start-column="20" selection-end-line="51" selection-end-column="20" />
-          <folding>
-            <element signature="e#23#54#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/playNoLogic.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="288">
@@ -1001,12 +958,62 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Queen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.49073064" vertical-offset="216" max-vertical-offset="1440">
+          <caret line="37" column="50" selection-start-line="37" selection-start-column="50" selection-end-line="37" selection-end-column="50" />
+          <folding>
+            <element signature="e#12#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Pawn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.42580646" vertical-offset="216" max-vertical-offset="1530">
-          <caret line="34" column="18" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="1566">
+          <caret line="39" column="45" selection-start-line="39" selection-start-column="45" selection-end-line="39" selection-end-column="45" />
           <folding>
             <element signature="e#19#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Knight.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="6822">
+          <caret line="35" column="51" selection-start-line="35" selection-start-column="51" selection-end-line="35" selection-end-column="51" />
+          <folding>
+            <element signature="e#32#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/King.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1440">
+          <caret line="38" column="49" selection-start-line="38" selection-start-column="49" selection-end-line="38" selection-end-column="49" />
+          <folding>
+            <element signature="e#11#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Bishop.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="414" max-vertical-offset="1602">
+          <caret line="40" column="51" selection-start-line="40" selection-start-column="51" selection-end-line="40" selection-end-column="51" />
+          <folding>
+            <element signature="e#23#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Rook.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1308615" vertical-offset="402" max-vertical-offset="1476">
+          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+          <folding>
+            <element signature="e#18#49#0" expanded="true" />
           </folding>
         </state>
       </provider>
