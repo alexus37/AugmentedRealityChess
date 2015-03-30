@@ -1,6 +1,6 @@
 # defines
 
-#bools
+# bools
 true = 1
 false = 0
 
@@ -38,6 +38,9 @@ black = 31
 shadow = 32
 normal = 33
 color2 = 34
+# AX
+objWhite = 35
+objBlack = 36
 
 # different mates (identifiers)
 pawn = 41
@@ -55,6 +58,9 @@ castlingOn = 54
 changePawnOn = 55 
 kingFirstMove = 56
 
+# obj defines
+drawBlackQueenObj = 73
+drawWhiteQueenObj = 74
 # for game:
 blockSize = 0.7
 standardFactor = (blockSize/5.6)*6/7

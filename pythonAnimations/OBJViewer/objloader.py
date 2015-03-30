@@ -31,13 +31,12 @@ def MTL(filename):
     return contents
 
 class OBJ:
-    def __init__(self, filename, swapyz=False, listindex = 1):
+    def __init__(self, filename, swapyz=False):
         """Loads a Wavefront OBJ file. """
         self.vertices = []
         self.normals = []
         self.texcoords = []
         self.faces = []
-        self.gl_list = listindex
 
         material = None
         for line in open(filename, "r"):
@@ -77,6 +76,7 @@ class OBJ:
                         norms.append(0)
                 self.faces.append((face, norms, texcoords, material))
 
+        self.gl_list = glGenLists(1)
         glNewList(self.gl_list, GL_COMPILE)
         glEnable(GL_TEXTURE_2D)
         glFrontFace(GL_CCW)

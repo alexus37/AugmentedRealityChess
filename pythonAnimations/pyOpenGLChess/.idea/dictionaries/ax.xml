@@ -1,8 +1,15 @@
 <component name="ProjectDictionaryState">
   <dictionary name="ax">
     <words>
+      <w>anim</w>
+      <w>coords</w>
       <w>modelview</w>
+      <w>proj</w>
+      <w>redrw</w>
+      <w>texcoords</w>
+      <w>texmap</w>
       <w>turkis</w>
+      <w>useobj</w>
     </words>
   </dictionary>
 </component>

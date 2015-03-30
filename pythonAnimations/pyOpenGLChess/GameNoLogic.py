@@ -16,7 +16,6 @@ import King
 import Piece
 from Piece import emptyPiece
 
-import Undo
 
 from engineDirectory.sunfish import *
 
@@ -206,15 +205,15 @@ class Game:
         temp.drawMe(normal)
         glEndList()
 
-        temp = Queen.Queen(black, -1, -1)
+        temp = Queen.Queen(black, -1, -1, false)
         glNewList(drawBlackQueen, GL_COMPILE_AND_EXECUTE)
         temp.drawMe(normal)
         glEndList()
 
-        temp = Queen.Queen(white, -1, -1)
-        glNewList(drawWhiteQueen, GL_COMPILE_AND_EXECUTE)
-        temp.drawMe(normal)
-        glEndList()
+        temp = Queen.Queen(objWhite, -1, -1, true)
+        # glNewList(drawWhiteQueen, GL_COMPILE_AND_EXECUTE)
+        # temp.drawMe(normal)
+        # glEndList()
 
         temp = King.King(black, -1, -1)
         glNewList(drawBlackKing, GL_COMPILE_AND_EXECUTE)
@@ -327,7 +326,7 @@ class Game:
         # now draw Pieces:
         glPushMatrix()
         glTranslatef((-0.5) * blockSize, 1.5 * blockSize, 0)
-        glCallList(drawWhiteQueen)
+        glCallList(drawWhiteQueenObj)
         glPopMatrix()
         glPushMatrix()
         glTranslatef(0.5 * blockSize, 1.5 * blockSize, 0)
@@ -401,9 +400,9 @@ class Game:
         self.array[6, 8] = self.bishops[3]
 
         # queens
-        self.queens.append(Queen.Queen(white, 4, 1))
+        self.queens.append(Queen.Queen(objWhite, 4, 1, true))
         self.array[4, 1] = self.queens[0]
-        self.queens.append(Queen.Queen(black, 4, 8))
+        self.queens.append(Queen.Queen(black, 4, 8, false))
         self.array[4, 8] = self.queens[1]
 
         # kings
@@ -412,6 +411,7 @@ class Game:
         self.kings.append(King.King(black, 5, 8))
         self.array[5, 8] = self.kings[1]
 
+    # reshape the animation when the window size changes
     @staticmethod
     def reshape(width, height):
         #  set the view port with low left corner and width and height
@@ -462,32 +462,54 @@ class Game:
 
 
     def drawAnim(self):
+        # start to redraw the scene
         self.beginRedraw()
+        # draw the top board
         glCallList(boardTopAnim)
+        # Todo: can be removed
         glCallList(drawBorder)
+
         self.endRedraw()
 
-
     def beginRedraw(self):
+        # clear buffers to preset values
+        # GL_COLOR_BUFFER_BIT: Indicates the buffers currently enabled for color writing.
+        # GL_DEPTH_BUFFER_BIT: Indicates the depth buffer.
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        # load a identity matrix
         glLoadIdentity()
+
+        # multiply the current matrix with a translation matrix
         glTranslatef(0.0, 0.0, -10.0)
+
+        # apply the current rotations
         glRotatef(self.rotation[0], 1.0, 0.0, 0.0)
         glRotatef(self.rotation[1], 0.0, 0.0, 1.0)
 
+        # have one or more material parameters track the current color
         glDisable(GL_COLOR_MATERIAL)
 
+        # specify the clear value for the stencil buffer
         glClearStencil(0)
-        glClear(GL_STENCIL_BUFFER_BIT)
-        glStencilFunc(GL_ALWAYS, 0, 0x1)
-        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP)
-        # self.drawBoardBottom()
 
+        # reset the stencil bit
+        glClear(GL_STENCIL_BUFFER_BIT)
+
+        # set front and back function and reference value for stencil testing
+        glStencilFunc(GL_ALWAYS, 0, 0x1)
+
+        # set front and back stencil test actions
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP)
+
+        # draw the grey ground plane
+        # Todo: can be reomved when it comes to VR
         glCallList(boardBottom)
 
+        # set front and back function and reference value for stencil testing
         glStencilFunc(GL_ALWAYS, 1, 0x1)
+        # set front and back stencil test actions
         glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE)
-
 
     def endRedraw(self):
         glEnable(GL_COLOR_MATERIAL)
@@ -500,19 +522,18 @@ class Game:
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glDisable(GL_LIGHTING)
-        # glDepthMask(GL_FALSE)
+        # draw the shadows
         if self.showShadows == 1:
             self.drawShadows()
-        #glDepthMask(GL_TRUE)
+
         glPopMatrix()
         glEnable(GL_LIGHTING)
         glDisable(GL_BLEND)
 
         glStencilFunc(GL_ALWAYS, 1, 0x1)
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP)
-        #glDisable(GL_STENCIL_TEST)
 
-        #glCallList (drawFigures)
+        # draw all pieces
         self.drawPieces()
 
         glutSwapBuffers()
@@ -524,7 +545,6 @@ class Game:
             self.turn = black
         else:
             self.turn = white
-
 
     def key_pressed(self, key, x, y):
         ESCAPE = chr(27)
@@ -544,31 +564,24 @@ class Game:
             else:
                 self.showShadows = 1
 
-        elif key == 'u':
-            tempFeld = self.undo.undo(self.array)
-            if (tempFeld != None):
-                self.array = tempFeld
-                self.chosenBlock = [-1, -1]
-                self.activePiece = None
-                self.possibleMoves = []
-                self.toggleTurn()
-                self.checkForCheck()
-                self.pieceChange = false
-
         if self.animationMode == 0:
             self.redraw()
 
-
+    # handle mouse movement
     def mouse_moved(self, x, y):
+        # only if the right button is used
         if self.button != GLUT_RIGHT_BUTTON:
             return
+        # set the current rotation
         self.rotation[0] += (y - self.mouse[1]) / 85
         self.rotation[1] += (x - self.mouse[0]) / 85
+        #  mark the current window as needing to be redisplayed
         glutPostRedisplay()
 
-
+    # handle clicks and scrolling
     def mouse_pressed(self, button, state, x, y):
         self.button = button
+        # set the clicked coordinates
         if (button == GLUT_RIGHT_BUTTON) and (state == GLUT_DOWN):
             self.mouse[0] = x
             self.mouse[1] = y
@@ -593,7 +606,6 @@ class Game:
                 glMatrixMode(GL_MODELVIEW)
                 self.redraw()
 
-
         elif (button == GLUT_LEFT_BUTTON) and (state == GLUT_UP):
             model = glGetDoublev(GL_MODELVIEW_MATRIX)
             proj = glGetDoublev(GL_PROJECTION_MATRIX)
@@ -604,9 +616,9 @@ class Game:
             move = self.handleClick()
             self.redraw()
 
-            if (self.useEngine == true and move != ""):
+            if self.useEngine == true and move != "":
                 # use a engine
-                print "recieved move " + move
+                print "received move " + move
                 print self.sunfish
                 self.sunfish.setMove(move)
                 engMove = self.sunfish.computeNextStep()
@@ -628,15 +640,7 @@ class Game:
                 self.showShadows = 1
 
         elif option == 2:
-            tempFeld = self.undo.undo(self.array)
-            if (tempFeld != None):
-                self.array = tempFeld
-                self.chosenBlock = [-1, -1]
-                self.activePiece = None
-                self.possibleMoves = []
-                self.toggleTurn()
-                self.checkForCheck()
-                self.pieceChange = false
+            print "Undo not supported"
 
         elif option == 3:
             sys.exit()
@@ -646,14 +650,7 @@ class Game:
 
 
     def move(self, x, y, castling=false):
-        if (castling == true):
-            self.undo.rememberUndo(self.activePiece, x, y, self.array, castlingOn)
-        elif (self.pieceChange == true):
-            self.undo.rememberUndo(self.activePiece, x, y, self.array, changePawnOn)
-        elif ((self.activePiece.type == king) and (self.activePiece.moved == false)):
-            self.undo.rememberUndo(self.activePiece, i + 1, j + 1, self.array, kingFirstMove)
-        else:
-            self.undo.rememberUndo(self.activePiece, x, y, self.array, false)
+
         self.array[self.activePiece.pos[0], self.activePiece.pos[1]] = emptyPiece
         # move:
         destination = [x, y]
@@ -1114,7 +1111,7 @@ class Game:
         x = self.activePiece.pos[0]
         y = self.activePiece.pos[1]
         if (i == -1):
-            self.queens.append(Queen.Queen(color, x, y))
+            self.queens.append(Queen.Queen(color, x, y, false))
             self.array[x, y].kill()
             self.array[x, y] = self.queens[(len(self.queens) - 1)]
             self.removeMarkings()
@@ -1354,14 +1351,6 @@ class Game:
                                     self.move(i + 1, j + 1, self.doingCastling)
                                     self.animationMode = 0
                                 else:
-                                    if (self.doingCastling == true):
-                                        self.undo.rememberUndo(self.activePiece, i + 1, j + 1, self.array, castlingOn)
-                                    elif (self.pieceChange == true):
-                                        self.undo.rememberUndo(self.activePiece, i + 1, j + 1, self.array, changePawnOn)
-                                    elif ((self.activePiece.type == king) and (self.activePiece.moved == false)):
-                                        self.undo.rememberUndo(self.activePiece, i + 1, j + 1, self.array, kingFirstMove)
-                                    else:
-                                        self.undo.rememberUndo(self.activePiece, i + 1, j + 1, self.array, false)
 
                                     self.array[self.activePiece.pos[0], self.activePiece.pos[1]] = emptyPiece
                                     # move:
@@ -1418,7 +1407,8 @@ class Game:
                                     self.possibleMoves = self.activePiece.moves(self.array)
         return curMove
 
-    def drawBoardTop(self):
+    @staticmethod
+    def drawBoardTop():
         # board blocks:
 
         for i in range(0, 8):
@@ -1491,7 +1481,7 @@ class Game:
         glVertex3f(-4 * blockSize, 4 * blockSize, -0)
         glEnd()
 
-
+    # draw all figures
     def drawPieces(self):
         for i in range(0, len(self.pawns)):
             self.pawns[i].draw()
@@ -1511,16 +1501,7 @@ class Game:
         for i in range(0, len(self.kings)):
             self.kings[i].draw()
 
-            # light ball:
-            #glPushMatrix()
-            #glColor3d(1,1,1)
-            #glTranslatef(self.light [0], self.light [1], self.light [2])
-            #lfigur_4 = gluNewQuadric()
-            #gluQuadricDrawStyle(lfigur_4, GLU_FILL)
-            #gluSphere(lfigur_4, 0.5*standardFactor, 16, 16)
-            #glPopMatrix()
-
-
+    # draw the shadows for all figures
     def drawShadows(self):
         for i in range(0, len(self.pawns)):
             self.pawns[i].drawShadow()
