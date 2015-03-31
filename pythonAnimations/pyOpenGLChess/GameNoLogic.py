@@ -167,22 +167,40 @@ class Game:
         glEndList()
         print "loading figures"
         # create objects
-        temp = Pawn.Pawn(objBlack, -1, -1, true)
-        temp = Pawn.Pawn(objWhite, -1, -1, true)
+        temp = Pawn.Pawn(black, -1, -1, false)
+        glNewList(drawBlackPawn, GL_COMPILE_AND_EXECUTE)
+        temp.drawMe(normal)
+        glEndList()
+        temp = Pawn.Pawn(objWhite, -1, -1, false)
 
-        temp = Rook.Rook(objBlack, -1, -1, true)
+        temp = Rook.Rook(black, -1, -1, false)
+        glNewList(drawBlackRook, GL_COMPILE_AND_EXECUTE)
+        temp.drawMe(normal)
+        glEndList()
         temp = Rook.Rook(objWhite, -1, -1, true)
 
-        temp = Knight.Knight(objBlack, -1, -1, true)
+        temp = Knight.Knight(black, -1, -1, false)
+        glNewList(drawBlackKnight, GL_COMPILE_AND_EXECUTE)
+        temp.drawMe(normal)
+        glEndList()
         temp = Knight.Knight(objWhite, -1, -1, true)
 
-        temp = Bishop.Bishop(objBlack, -1, -1, true)
+        temp = Bishop.Bishop(black, -1, -1, false)
+        glNewList(drawBlackBishop, GL_COMPILE_AND_EXECUTE)
+        temp.drawMe(normal)
+        glEndList()
         temp = Bishop.Bishop(objWhite, -1, -1, true)
 
-        temp = Queen.Queen(objBlack, -1, -1, true)
+        temp = Queen.Queen(black, -1, -1, false)
+        glNewList(drawBlackQueen, GL_COMPILE_AND_EXECUTE)
+        temp.drawMe(normal)
+        glEndList()
         temp = Queen.Queen(objWhite, -1, -1, true)
 
-        temp = King.King(objBlack, -1, -1, true)
+        temp = King.King(black, -1, -1, false)
+        glNewList(drawBlackKing, GL_COMPILE_AND_EXECUTE)
+        temp.drawMe(normal)
+        glEndList()
         temp = King.King(objWhite, -1, -1, true)
         print "done"
         # add all objects to the board (Black)
@@ -328,7 +346,7 @@ class Game:
             self.array[i + 1, 2] = self.pawns[i]
         # black pawns:
         for i in range(8, 16):
-            self.pawns.append(Pawn.Pawn(objBlack, i - 7, 7, true))
+            self.pawns.append(Pawn.Pawn(black, i - 7, 7, false))
             self.array[i - 7, 7] = self.pawns[i]
         # rooks
         print "loading rooks"
@@ -336,9 +354,9 @@ class Game:
         self.array[1, 1] = self.rooks[0]
         self.rooks.append(Rook.Rook(objWhite, 8, 1, true))
         self.array[8, 1] = self.rooks[1]
-        self.rooks.append(Rook.Rook(objBlack, 1, 8, true))
+        self.rooks.append(Rook.Rook(black, 1, 8, false))
         self.array[1, 8] = self.rooks[2]
-        self.rooks.append(Rook.Rook(objBlack, 8, 8, true))
+        self.rooks.append(Rook.Rook(black, 8, 8, false))
         self.array[8, 8] = self.rooks[3]
 
         # knights
@@ -347,9 +365,9 @@ class Game:
         self.array[2, 1] = self.knights[0]
         self.knights.append(Knight.Knight(objWhite, 7, 1, true))
         self.array[7, 1] = self.knights[1]
-        self.knights.append(Knight.Knight(objBlack, 2, 8, true))
+        self.knights.append(Knight.Knight(black, 2, 8, false))
         self.array[2, 8] = self.knights[2]
-        self.knights.append(Knight.Knight(objBlack, 7, 8, true))
+        self.knights.append(Knight.Knight(black, 7, 8, false))
         self.array[7, 8] = self.knights[3]
 
         # bishops
@@ -358,23 +376,23 @@ class Game:
         self.array[3, 1] = self.bishops[0]
         self.bishops.append(Bishop.Bishop(objWhite, 6, 1, true))
         self.array[6, 1] = self.bishops[1]
-        self.bishops.append(Bishop.Bishop(objBlack, 3, 8, true))
+        self.bishops.append(Bishop.Bishop(black, 3, 8, false))
         self.array[3, 8] = self.bishops[2]
-        self.bishops.append(Bishop.Bishop(objBlack, 6, 8, true))
+        self.bishops.append(Bishop.Bishop(black, 6, 8, false))
         self.array[6, 8] = self.bishops[3]
 
         # queens
         print "loading queens"
         self.queens.append(Queen.Queen(objWhite, 4, 1, true))
         self.array[4, 1] = self.queens[0]
-        self.queens.append(Queen.Queen(objBlack, 4, 8, true))
+        self.queens.append(Queen.Queen(black, 4, 8, false))
         self.array[4, 8] = self.queens[1]
 
         # kings
         print "loading kings"
         self.kings.append(King.King(objWhite, 5, 1, true))
         self.array[5, 1] = self.kings[0]
-        self.kings.append(King.King(objBlack, 5, 8, true))
+        self.kings.append(King.King(black, 5, 8, false))
         self.array[5, 8] = self.kings[1]
 
     # reshape the animation when the window size changes

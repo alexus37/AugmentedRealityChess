@@ -28,7 +28,6 @@ class Pawn(Piece.Piece):
         self.radius3 = 0.35
         self.radius4 = 0.5
 
-        self.objFilePath = "obj/Pawn.obj"
         self.useObj = useobj
         self.obj = None
 
@@ -45,9 +44,9 @@ class Pawn(Piece.Piece):
             glPushMatrix()
             self.translate()
             if self.factor == 1:
-                if self.color == white:
+                if self.color == white and not self.useObj:
                     glCallList(drawWhitePawn)
-                elif self.color == black:
+                elif self.color == black and not self.useObj:
                     glCallList(drawBlackPawn)
                 elif self.useObj:
                     glScalef(0.04, 0.04, 0.04)

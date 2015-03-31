@@ -1,11 +1,12 @@
-# Created with Anim8or 0.97d beta
-# Object "Pawn":
+# Blender MTL File: 'None'
+# Material Count: 1
 
-newmtl Wood
-Ka 1 1 1
-Kd 1 1 1
-Ks 1 1 1
-d 1.0
-Ns 1000.0
+newmtl Wood.001
+Ns 996.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
 map_Kd Wood.jpg
-

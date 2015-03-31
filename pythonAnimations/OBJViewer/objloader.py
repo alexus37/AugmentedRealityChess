@@ -37,6 +37,7 @@ class OBJ:
         self.normals = []
         self.texcoords = []
         self.faces = []
+        self.mtl = None
 
         material = None
         for line in open(filename, "r"):
@@ -82,14 +83,14 @@ class OBJ:
         glFrontFace(GL_CCW)
         for face in self.faces:
             vertices, normals, texture_coords, material = face
-
-            mtl = self.mtl[material]
-            if 'texture_Kd' in mtl:
-                # use diffuse texmap
-                glBindTexture(GL_TEXTURE_2D, mtl['texture_Kd'])
+            if self.mtl is not None:
+                mtl = self.mtl[material]
+                if 'texture_Kd' in mtl:
+                    # use diffuse texmap
+                    glBindTexture(GL_TEXTURE_2D, mtl['texture_Kd'])
             else:
                 # just use diffuse colour
-                glColor(*mtl['Kd'])
+                glColor3f(1, 1, 1)
 
             glBegin(GL_POLYGON)
             for i in range(len(vertices)):

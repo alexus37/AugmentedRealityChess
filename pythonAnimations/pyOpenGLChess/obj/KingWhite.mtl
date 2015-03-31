@@ -1,11 +1,12 @@
-# Created with Anim8or 0.97d beta
-# Object "King":
+# Blender MTL File: 'None'
+# Material Count: 1
 
 newmtl material01
-Ka 0.875 0.875 0.875
-Kd 0.875 0.875 0.875
-Ks 1 1 1
-d 1.0
-Ns 752.6
+Ns 749.019608
+Ka 0.000000 0.000000 0.000000
+Kd 0.700000 0.700000 0.700000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
 map_Kd Wood.jpg
-
