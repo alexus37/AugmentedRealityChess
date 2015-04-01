@@ -72,6 +72,9 @@ drawWhiteQueenObj = 74
 drawBlackKingObj = 75
 drawWhiteKingObj = 76
 
+# debug
+debug = 99
+
 # for game:
 blockSize = 0.7
 standardFactor = (blockSize/5.6)*6/7

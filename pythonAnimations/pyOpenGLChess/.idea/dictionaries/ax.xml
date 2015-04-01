@@ -2,6 +2,7 @@
   <dictionary name="ax">
     <words>
       <w>anim</w>
+      <w>argv</w>
       <w>coords</w>
       <w>crdn</w>
       <w>keychache</w>

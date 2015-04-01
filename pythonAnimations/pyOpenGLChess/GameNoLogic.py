@@ -56,6 +56,7 @@ class Game:
         self.height = 0
         self.width = 0
         self.keychache = []
+        self.debug = true
 
         self.array = {'Piece': {}, 'Piece': {}}
 
@@ -139,27 +140,15 @@ class Game:
         # end of light
 
         # display lists generate a contiguous set of empty display lists
-        displayLists = glGenLists(17)  # 18)
-
-        # create or replace a display list (Display lists are groups of GL
-        # commands that have been stored for subsequent execution)
-        # Specifies the display-list name.
-        # Specifies the compilation mode
-        # TODO: CAN BE REMOVED LATER (check the glGenLists length)
-        glNewList(boardBottom, GL_COMPILE_AND_EXECUTE)
-        # draw the sides and the bottom of the board
-        self.drawBoardBottom()
-        glEndList()
+        if debug:
+            displayLists = glGenLists(17)  # 18)
+        else:
+            displayLists = glGenLists(16)  # 18)
 
         glNewList(boardTop, GL_COMPILE_AND_EXECUTE)
         # draw the checkerboard
         self.drawBoardTop()
         glEndList()
-
-        # TODO: CHECK THE SIZE of glGenLists length (prob -1)
-        # glNewList(boardTopAnim, GL_COMPILE_AND_EXECUTE)
-        # self.drawBoardTopAnim()
-        # glEndList()
 
         glNewList(drawBorder, GL_COMPILE_AND_EXECUTE)
         # TODO: CAN BE REMOVED LATER (check the glGenLists length)
@@ -213,7 +202,49 @@ class Game:
         self.drawPieceChoiceCallListWhite()
         glEndList()
 
+        if self.debug:
+            print "adding axis"
+            glNewList(debug, GL_COMPILE_AND_EXECUTE)
+            self.addAxis()
+            glEndList()
+
+
         self.reshape(width, height)
+
+    @staticmethod
+    def addAxis():
+        glLineWidth(5)
+        # Draw x-axis line.
+        glColor3d(1.0, 0.0, 0.0)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, [1, 0, 0, 0])
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, [1.0, 1.0, 1.0, 0])
+        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.1, 0])
+
+        glBegin(GL_LINES)
+        glVertex3f(0, 0, 0)
+        glVertex3f(1, 0, 0)
+        glEnd()
+
+        # Draw y-axis line.
+        glColor3d(0.0, 1.0, 0.0)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, [0, 1, 0, 0])
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, [1.0, 1.0, 1.0, 0])
+        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.1, 0])
+        glBegin(GL_LINES)
+        glVertex3f(0, 0, 0)
+        glVertex3f(0, 1, 0)
+        glEnd()
+
+        # Draw z-axis line.
+
+        glColor3d(0.0, 0.0, 1.0)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, [0, 0, 1, 0])
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, [1.0, 1.0, 1.0, 0])
+        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.1, 0])
+        glBegin(GL_LINES)
+        glVertex3f(0, 0, 0)
+        glVertex3f(0, 0, 1)
+        glEnd()
 
     def drawPieceChoiceCallListBlack(self):
         glDisable(GL_COLOR_MATERIAL)
@@ -480,6 +511,9 @@ class Game:
         # Todo: can be reomved when it comes to VR
         glCallList(boardBottom)
 
+        if debug:
+            glCallList(debug)
+
         # set front and back function and reference value for stencil testing
         glStencilFunc(GL_ALWAYS, 1, 0x1)
         # set front and back stencil test actions
@@ -726,7 +760,8 @@ class Game:
                 glVertex3f((-4 + i) * blockSize, (-4 + j + 1) * blockSize, 0)
                 glEnd()
 
-    def drawBorder(self):
+    @staticmethod
+    def drawBorder():
 
         glMaterialfv(GL_FRONT, GL_AMBIENT, [0.4, 0.4, 0.5, 0])
         glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.5, 0.5, 0.5, 0])
@@ -813,7 +848,6 @@ class Game:
 
         for i in range(0, len(self.kings)):
             self.kings[i].drawShadow()
-
 
     def start(self):
         argv = glutInit(sys.argv)
