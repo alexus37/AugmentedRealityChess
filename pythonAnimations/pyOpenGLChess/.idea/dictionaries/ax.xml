@@ -3,8 +3,10 @@
     <words>
       <w>anim</w>
       <w>argv</w>
+      <w>bgtexid</w>
       <w>coords</w>
       <w>crdn</w>
+      <w>imname</w>
       <w>keychache</w>
       <w>modelview</w>
       <w>proj</w>

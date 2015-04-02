@@ -72,6 +72,9 @@ drawWhiteQueenObj = 74
 drawBlackKingObj = 75
 drawWhiteKingObj = 76
 
+# texture
+background = 80
+
 # debug
 debug = 99
 

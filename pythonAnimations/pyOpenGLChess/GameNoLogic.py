@@ -6,6 +6,7 @@ import math, sys, time
 
 from defines import *
 from openGLFunctions import *
+import pygame
 
 import Pawn
 import Rook
@@ -33,6 +34,12 @@ class Game:
 
         # init the engine
         self.sunfish = engineSunfish()
+
+        self.camPos = [0, 0, 10]
+        self.up = [0, 1, 0]
+        self.lookAt = [0, 0, 0]
+
+        self.BGTEXID = 0
 
         self.zoom = 45.0
         self.button = None
@@ -67,7 +74,8 @@ class Game:
         self.height = height
         self.width = width
         # specify clear values for the color buffers
-        glClearColor(0.4, 0.4, 0.4, 0.0)
+        # grey background
+        glClearColor(0.7, 0.7, 0.7, 0.0)
 
         # specify the clear value for the depth buffer
         glClearDepth(1.0)
@@ -99,7 +107,7 @@ class Game:
 
         # light set position and color
         lightPosition = (self.light[0], self.light[1], self.light[2], self.light[3])
-        lightAmbient = (0.6, 0.6, 0.6, 0.0)
+        lightAmbient = (1.0, 1.0, 1.0, 0.0)
         lightDiffuse = (0.6, 0.6, 0.6, 0.0)
         lightSpecular = (0.2, 0.2, 0.2, 0.0)
 
@@ -130,6 +138,7 @@ class Game:
         # if the depth buffer exists and the depth mask is non-zero, the depth buffer
         # is not updated if the depth test is disabled.
         glEnable(GL_DEPTH_TEST)
+        glClear(GL_DEPTH_BUFFER_BIT)
 
         # specify the clear value for the stencil buffer
         glClearStencil(0)
@@ -141,13 +150,17 @@ class Game:
 
         # display lists generate a contiguous set of empty display lists
         if debug:
-            displayLists = glGenLists(17)  # 18)
+            displayLists = glGenLists(18)  # 18)
         else:
-            displayLists = glGenLists(16)  # 18)
+            displayLists = glGenLists(17)  # 18)
 
         glNewList(boardTop, GL_COMPILE_AND_EXECUTE)
         # draw the checkerboard
         self.drawBoardTop()
+        glEndList()
+
+        glNewList(background, GL_COMPILE_AND_EXECUTE)
+        self.drawBackground('test.jpg')
         glEndList()
 
         glNewList(drawBorder, GL_COMPILE_AND_EXECUTE)
@@ -208,8 +221,21 @@ class Game:
             self.addAxis()
             glEndList()
 
-
         self.reshape(width, height)
+
+    def setLookatMatrix(self):
+
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(self.zoom, self.width / self.height, 0.1, 100.0)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+        gluLookAt(self.camPos[0], self.camPos[1], self.camPos[2],
+                  self.lookAt[0], self.lookAt[1], self.lookAt[2],
+                  self.up[0], self.up[1], self.up[2]
+                  )
+        glRotatef(self.rotation[0], 1.0, 0.0, 0.0)
+        glRotatef(self.rotation[1], 0.0, 0.0, 1.0)
 
     @staticmethod
     def addAxis():
@@ -350,22 +376,6 @@ class Game:
         glCallList(drawWhiteRookObj)
         glPopMatrix()
 
-
-    def drawPieceChoice(self):
-        if (self.activePiece != None):
-            if (self.activePiece.color == white):
-                yAdd = 1
-            else:
-                yAdd = -1
-            glPushMatrix()
-            glTranslatef(blockSize * (-5 + self.activePiece.pos[0]), blockSize * (-6 + self.activePiece.pos[1] + yAdd),
-                         0.01 * blockSize)
-            if (self.activePiece.color == white):
-                glCallList(pieceChangeChoiceWhite)
-            else:
-                glCallList(pieceChangeChoiceBlack)
-            glPopMatrix()
-
     def initPieces(self):
         for i in range(-1, 10):
             for j in range(-1, 10):
@@ -455,13 +465,15 @@ class Game:
         glLoadIdentity()
 
     def redraw(self):
+
+        self.setLookatMatrix()
         self.beginRedraw()
-        # glCallList (boardTop)
+        glCallList(background)
         self.drawBoardTop()
 
         glCallList(drawBorder)
+
         # if self.pieceChange == true:
-        # self.drawPieceChoice()
         self.endRedraw()
 
 
@@ -483,14 +495,14 @@ class Game:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # load a identity matrix
-        glLoadIdentity()
+        # glLoadIdentity()
 
         # multiply the current matrix with a translation matrix
-        glTranslatef(0.0, 0.0, -10.0)
+        # glTranslatef(0.0, 0.0, -10.0)
 
         # apply the current rotations
-        glRotatef(self.rotation[0], 1.0, 0.0, 0.0)
-        glRotatef(self.rotation[1], 0.0, 0.0, 1.0)
+        # glRotatef(self.rotation[0], 1.0, 0.0, 0.0)
+        # glRotatef(self.rotation[1], 0.0, 0.0, 1.0)
 
         # have one or more material parameters track the current color
         glDisable(GL_COLOR_MATERIAL)
@@ -589,7 +601,7 @@ class Game:
     # handle mouse movement
     def mouse_moved(self, x, y):
         # only if the right button is used
-        if self.button == GLUT_RIGHT_BUTTON or self.button == GLUT_LEFT_BUTTON:
+        if self.button == GLUT_LEFT_BUTTON:
             # set the current rotation
             self.rotation[0] += (y - self.mouse[1]) / 85
             self.rotation[1] += (x - self.mouse[0]) / 85
@@ -600,9 +612,11 @@ class Game:
     def mouse_pressed(self, button, state, x, y):
         self.button = button
         # set the clicked coordinates
-        if (button == GLUT_RIGHT_BUTTON or button == GLUT_LEFT_BUTTON) and (state == GLUT_DOWN):
+        if (button == GLUT_LEFT_BUTTON) and (state == GLUT_DOWN):
             self.mouse[0] = x
             self.mouse[1] = y
+        # if button == GLUT_RIGHT_BUTTON and state == GLUT_DOWN:
+
 
         # handle scroll event
         elif button == 3 or button == 4:
@@ -610,14 +624,14 @@ class Game:
                 return
 
             if button == 3:
-                self.zoom += 1
+                self.zoom -= 1
                 glMatrixMode(GL_PROJECTION)
                 glLoadIdentity()
                 gluPerspective(self.zoom, self.width / self.height, 0.1, 100.0)
                 glMatrixMode(GL_MODELVIEW)
                 self.redraw()
             else:
-                self.zoom -= 1
+                self.zoom += 1
                 glMatrixMode(GL_PROJECTION)
                 glLoadIdentity()
                 gluPerspective(self.zoom, self.width / self.height, 0.1, 100.0)
@@ -648,6 +662,49 @@ class Game:
 
         if self.animationMode == 0:
             self.redraw()
+
+    def drawBackground(self, imName):
+        """  Draw background image using a quad. """
+
+        # load background image (should be .bmp) to OpenGL texture
+        bg_image = pygame.image.load(imName)
+        bg_data = pygame.image.tostring(bg_image, "RGBA", 1)
+
+        # glMatrixMode(GL_MODELVIEW)
+        # glLoadIdentity()
+        # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        ix, iy = bg_image.get_rect().size
+
+        # bind the texture
+        glEnable(GL_TEXTURE_2D)
+        self.BGTEXID = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, self.BGTEXID)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, bg_data)
+
+        # glColor3d(0.95, 0.05, 0.05)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, [1, 1, 1, 0])
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.1, 0.1, 0.1, 0])
+        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.1, 0])
+
+        # create quad to fill the whole window
+        glBegin(GL_POLYGON)
+        glTexCoord2f(0.0, 0.0)
+        glVertex3f(-10.0, -10.0, -0.1)
+        glTexCoord2f(1.0, 0.0)
+        glVertex3f(10.0, -10.0, -0.1)
+        glTexCoord2f(1.0, 1.0)
+        glVertex3f(10.0, 10.0, -0.1)
+        glTexCoord2f(0.0, 1.0)
+        glVertex3f(-10.0, 10.0, -0.1)
+        glEnd()
+
+        # clear the texture
+        glDeleteTextures(self.BGTEXID)
+
+        glDisable(GL_TEXTURE_2D)
 
     def drawBoardBottom(self):
         # set the color
@@ -870,6 +927,7 @@ class Game:
         glutAttachMenu(GLUT_MIDDLE_BUTTON)
 
         self.init(600, 500)
+
         self.redraw()
 
         glutMainLoop()
