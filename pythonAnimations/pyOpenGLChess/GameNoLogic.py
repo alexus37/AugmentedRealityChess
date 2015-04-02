@@ -230,6 +230,7 @@ class Game:
         gluPerspective(self.zoom, self.width / self.height, 0.1, 100.0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
+        print "cam pos = " + str(self.camPos)
         gluLookAt(self.camPos[0], self.camPos[1], self.camPos[2],
                   self.lookAt[0], self.lookAt[1], self.lookAt[2],
                   self.up[0], self.up[1], self.up[2]
@@ -577,7 +578,9 @@ class Game:
                 self.showShadows = 0
             else:
                 self.showShadows = 1
-
+        elif key == 't':
+            print "reset the cam pos"
+            self.camPos = [sum(x) for x in zip(self.camPos, [1, 1, 1])]
         else:
             self.keychache.append(key)
             # assume a move was entered
@@ -615,8 +618,9 @@ class Game:
         if (button == GLUT_LEFT_BUTTON) and (state == GLUT_DOWN):
             self.mouse[0] = x
             self.mouse[1] = y
-        # if button == GLUT_RIGHT_BUTTON and state == GLUT_DOWN:
-
+        if button == GLUT_RIGHT_BUTTON and state == GLUT_DOWN:
+            print "redraw"
+            self.redraw()
 
         # handle scroll event
         elif button == 3 or button == 4:
