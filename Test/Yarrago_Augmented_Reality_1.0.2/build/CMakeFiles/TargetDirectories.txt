@@ -1,1 +1,0 @@
-/home/ax/ownCloud/SS15/ETH/3DPhotography/AugmentedRealityChess/Test/Yarrago_Augmented_Reality_1.0.2/build/CMakeFiles/AugmentedReality.dir
