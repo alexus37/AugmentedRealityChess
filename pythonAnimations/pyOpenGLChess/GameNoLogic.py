@@ -6,6 +6,7 @@ import math, sys, time
 
 from defines import *
 from openGLFunctions import *
+
 import pygame
 
 import Pawn
@@ -15,6 +16,8 @@ import Bishop
 import Queen
 import King
 import Piece
+import Image
+import numpy as np
 from Piece import emptyPiece
 
 from engineDirectory.sunfish import *
@@ -23,6 +26,10 @@ from engineDirectory.sunfish import *
 # noinspection PyUnusedLocal,PyPep8Naming
 class Game:
     def __init__(self):
+
+        self.ready = False
+        self.reshaping = False
+
         # draw shadows of figures
         self.showShadows = true
         # do animations
@@ -64,6 +71,11 @@ class Game:
         self.width = 0
         self.keychache = []
         self.debug = true
+        self.currentFrame = None
+        self.newFrameArrived = False
+
+        self.projection = None
+        self.modelview = None
 
         self.array = {'Piece': {}, 'Piece': {}}
 
@@ -79,6 +91,7 @@ class Game:
 
         # specify the clear value for the depth buffer
         glClearDepth(1.0)
+        #return
 
         # specify the value used for depth buffer comparisons
         # GL_LESS Passes if the incoming depth value is less than the stored depth value
@@ -103,7 +116,7 @@ class Game:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
         # init the chess board
-        self.initPieces()
+        #self.initPieces()
 
         # light set position and color
         lightPosition = (self.light[0], self.light[1], self.light[2], self.light[3])
@@ -137,7 +150,10 @@ class Game:
         # do depth comparisons and update the depth buffer. Note that even
         # if the depth buffer exists and the depth mask is non-zero, the depth buffer
         # is not updated if the depth test is disabled.
-        glEnable(GL_DEPTH_TEST)
+
+        # TODO: DANGEROUS COMMENT
+        #glEnable(GL_DEPTH_TEST)
+
         glClear(GL_DEPTH_BUFFER_BIT)
 
         # specify the clear value for the stencil buffer
@@ -146,7 +162,13 @@ class Game:
         # do stencil testing and update the stencil buffer
         glEnable(GL_STENCIL_TEST)
 
+        if self.debug:
+            print "adding axis"
+            glNewList(debug, GL_COMPILE_AND_EXECUTE)
+            self.addAxis()
+            glEndList()
         # end of light
+        return
 
         # display lists generate a contiguous set of empty display lists
         if debug:
@@ -159,9 +181,11 @@ class Game:
         self.drawBoardTop()
         glEndList()
 
+        self.initTextureBackground()
         glNewList(background, GL_COMPILE_AND_EXECUTE)
-        self.drawBackground('test.jpg')
+        self.drawBackground()
         glEndList()
+        self.endTextureBackground()
 
         glNewList(drawBorder, GL_COMPILE_AND_EXECUTE)
         # TODO: CAN BE REMOVED LATER (check the glGenLists length)
@@ -215,13 +239,26 @@ class Game:
         self.drawPieceChoiceCallListWhite()
         glEndList()
 
-        if self.debug:
-            print "adding axis"
-            glNewList(debug, GL_COMPILE_AND_EXECUTE)
-            self.addAxis()
-            glEndList()
+
 
         self.reshape(width, height)
+
+
+
+    def setGlProjection(self):
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        if self.projection is not None:
+            glLoadMatrixd(self.projection)
+
+
+    def setGlModelView(self):
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+        if self.modelview is not None:
+            glLoadMatrixd(self.modelview)
+
+
 
     def setLookatMatrix(self):
 
@@ -230,7 +267,7 @@ class Game:
         gluPerspective(self.zoom, self.width / self.height, 0.1, 100.0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        print "cam pos = " + str(self.camPos)
+        #print "cam pos = " + str(self.camPos)
         gluLookAt(self.camPos[0], self.camPos[1], self.camPos[2],
                   self.lookAt[0], self.lookAt[1], self.lookAt[2],
                   self.up[0], self.up[1], self.up[2]
@@ -249,7 +286,7 @@ class Game:
 
         glBegin(GL_LINES)
         glVertex3f(0, 0, 0)
-        glVertex3f(1, 0, 0)
+        glVertex3f(-0.05, 0, 0)
         glEnd()
 
         # Draw y-axis line.
@@ -259,7 +296,7 @@ class Game:
         glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.1, 0])
         glBegin(GL_LINES)
         glVertex3f(0, 0, 0)
-        glVertex3f(0, 1, 0)
+        glVertex3f(0, 0.05, 0)
         glEnd()
 
         # Draw z-axis line.
@@ -270,7 +307,7 @@ class Game:
         glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.1, 0])
         glBegin(GL_LINES)
         glVertex3f(0, 0, 0)
-        glVertex3f(0, 0, 1)
+        glVertex3f(0, 0, 0.05)
         glEnd()
 
     def drawPieceChoiceCallListBlack(self):
@@ -438,10 +475,17 @@ class Game:
         self.array[5, 8] = self.kings[1]
 
     # reshape the animation when the window size changes
-    @staticmethod
-    def reshape(width, height):
+    def updateWindowShape(self, width, height):
+        self.width = width
+        self.height = height
+
+
+    def reshape(self, width, height):
+        self.reshaping = True
         # set the view port with low left corner and width and height
         glViewport(0, 0, width, height)
+        #print "resize1"
+        self.updateWindowShape(width, height)
 
         # specify which matrix is the current matrix
         # GL_PROJECTION : Applies subsequent matrix operations to the projection matrix stack
@@ -464,16 +508,29 @@ class Game:
 
         # replace the current matrix with the identity matrix
         glLoadIdentity()
+        #print "resize2"
+        self.reshaping = False
 
     def redraw(self):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        #print glGetFloatv(GL_PROJECTION_MATRIX)
+        self.drawBackground()
+        #self.setLookatMatrix()
 
-        self.setLookatMatrix()
+        self.setGlProjection()
+        self.setGlModelView()
+
         self.beginRedraw()
-        glCallList(background)
-        self.drawBoardTop()
 
+
+        #self.initTextureBackground()
+
+        #self.endTextureBackground()
+
+
+
+        #self.drawBoardTop()
         glCallList(drawBorder)
-
         # if self.pieceChange == true:
         self.endRedraw()
 
@@ -493,7 +550,7 @@ class Game:
         # clear buffers to preset values
         # GL_COLOR_BUFFER_BIT: Indicates the buffers currently enabled for color writing.
         # GL_DEPTH_BUFFER_BIT: Indicates the depth buffer.
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
 
         # load a identity matrix
         # glLoadIdentity()
@@ -525,6 +582,7 @@ class Game:
         glCallList(boardBottom)
 
         if debug:
+            #print "adding axis"
             glCallList(debug)
 
         # set front and back function and reference value for stencil testing
@@ -619,7 +677,7 @@ class Game:
             self.mouse[0] = x
             self.mouse[1] = y
         if button == GLUT_RIGHT_BUTTON and state == GLUT_DOWN:
-            print "redraw"
+            # print "redraw"
             self.redraw()
 
         # handle scroll event
@@ -667,48 +725,70 @@ class Game:
         if self.animationMode == 0:
             self.redraw()
 
-    def drawBackground(self, imName):
-        """  Draw background image using a quad. """
+    def initTextureBackground(self):
+        if self.currentFrame is None and not self.newFrameArrived:
+            return
 
-        # load background image (should be .bmp) to OpenGL texture
-        bg_image = pygame.image.load(imName)
-        bg_data = pygame.image.tostring(bg_image, "RGBA", 1)
+        image = Image.fromarray(self.currentFrame)
+        ix = image.size[0]
+        iy = image.size[1]
+        image = image.tostring("raw", "BGRX", 0, -1)
 
-        # glMatrixMode(GL_MODELVIEW)
-        # glLoadIdentity()
-        # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-        ix, iy = bg_image.get_rect().size
-
-        # bind the texture
         glEnable(GL_TEXTURE_2D)
-        self.BGTEXID = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, self.BGTEXID)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, bg_data)
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
 
-        # glColor3d(0.95, 0.05, 0.05)
-        glMaterialfv(GL_FRONT, GL_AMBIENT, [1, 1, 1, 0])
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.1, 0.1, 0.1, 0])
-        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.1, 0])
+    def endTextureBackground(self):
+        #glDisable(GL_TEXTURE_2D)
+        print "bla"
+        #self.newFrameArrived = False
 
-        # create quad to fill the whole window
-        glBegin(GL_POLYGON)
-        glTexCoord2f(0.0, 0.0)
-        glVertex3f(-10.0, -10.0, -0.1)
-        glTexCoord2f(1.0, 0.0)
-        glVertex3f(10.0, -10.0, -0.1)
-        glTexCoord2f(1.0, 1.0)
-        glVertex3f(10.0, 10.0, -0.1)
-        glTexCoord2f(0.0, 1.0)
-        glVertex3f(-10.0, 10.0, -0.1)
-        glEnd()
+    def drawBackground(self):
+        """  Draw background image using a quad. """
+        if self.newFrameArrived and not self.reshaping:
+            imgHeight, imgwidth, _ = self.currentFrame.shape
+            if imgHeight == self.height and imgwidth == self.width:
+                glMatrixMode(GL_MODELVIEW)
+                glPushMatrix()
+                glLoadIdentity()
+                glMatrixMode(GL_PROJECTION)
+                glPushMatrix()
+                #print "Happy printings1"
+                #glMatrixMode(GL_MODELVIEW)
+                #glLoadIdentity()
 
-        # clear the texture
-        glDeleteTextures(self.BGTEXID)
+                #print "Happy printings"
+                glLoadIdentity()
+                #print "Happy printings"
+                glOrtho(0, self.width, 0, self.height, -1.0, 1.0)
+                #print "Happy printings"
+                glViewport(0, 0, self.width, self.height)
+                #print "Happy printings"
+                glDisable(GL_TEXTURE_2D)
+                glPixelZoom(1, -1)
+                glRasterPos3f(0, self.height-0.5, -1)
+                #print "Happy printings5"
+                glDrawPixels(self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, self.currentFrame)
+                #print "Happy printings6"
+                # glBegin(GL_QUADS)
+                # glTexCoord2f(0.0,0.0); glVertex3f(-4.0,-3.0,-10.0)
+                # glTexCoord2f(1.0,0.0); glVertex3f( 4.0,-3.0,-10.0)
+                # glTexCoord2f(1.0,1.0); glVertex3f( 4.0, 3.0,-10.0)
+                # glTexCoord2f(0.0,1.0); glVertex3f(-4.0, 3.0,-10.0)
+                # glEnd()
+                glPopMatrix()
+                glMatrixMode(GL_MODELVIEW)
+                glPopMatrix()
+            #self.newFrameArrived = False
 
-        glDisable(GL_TEXTURE_2D)
+
 
     def drawBoardBottom(self):
         # set the color
@@ -910,6 +990,11 @@ class Game:
         for i in range(0, len(self.kings)):
             self.kings[i].drawShadow()
 
+    def idleDraw(self):
+        self.redraw()
+
+
+
     def start(self):
         argv = glutInit(sys.argv)
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL)  # GLUT_ALPHA missing
@@ -922,6 +1007,7 @@ class Game:
         glutKeyboardFunc(self.key_pressed)
         glutMotionFunc(self.mouse_moved)
         glutMouseFunc(self.mouse_pressed)
+        glutIdleFunc(self.idleDraw)
 
         glutCreateMenu(self.processMenuEvents)
         glutAddMenuEntry("toggle animation mode", 0)
@@ -930,8 +1016,9 @@ class Game:
         glutAddMenuEntry("Quit", 3)
         glutAttachMenu(GLUT_MIDDLE_BUTTON)
 
-        self.init(600, 500)
+        self.init(640, 480)
 
         self.redraw()
 
+        self.ready = True
         glutMainLoop()
