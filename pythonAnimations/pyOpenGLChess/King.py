@@ -49,7 +49,7 @@ class King(Piece.Piece):
                 elif self.color == black and not self.useObj:
                     glCallList(drawBlackKing)
                 elif  self.useObj:
-                    glScalef(0.04, 0.04, 0.04)
+                    glScalef(figureScale, figureScale, figureScale)
                     set_color(self.color, normal)
                     glCallList(self.obj.gl_list)
             else:
@@ -65,7 +65,7 @@ class King(Piece.Piece):
 
     def drawMe(self, colorMode):
         if self.useObj == true:
-            glScalef(0.04, 0.04, 0.04)
+            glScalef(figureScale, figureScale, figureScale)
             set_color(self.color, colorMode)
             glCallList(self.obj.gl_list)
         else:

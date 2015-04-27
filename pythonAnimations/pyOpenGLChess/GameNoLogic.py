@@ -31,7 +31,7 @@ class Game:
         self.reshaping = False
 
         # draw shadows of figures
-        self.showShadows = true
+        self.showShadows = false
         # do animations
         self.doAnimation = false
         self.animationMode = false
@@ -78,6 +78,8 @@ class Game:
         self.modelview = None
 
         self.array = {'Piece': {}, 'Piece': {}}
+        self.height = 480
+        self.width = 640
 
         self.clickedCoordinates = (-10.0, -10.0, -10.0)
 
@@ -116,7 +118,7 @@ class Game:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
         # init the chess board
-        #self.initPieces()
+        self.initPieces()
 
         # light set position and color
         lightPosition = (self.light[0], self.light[1], self.light[2], self.light[3])
@@ -152,7 +154,7 @@ class Game:
         # is not updated if the depth test is disabled.
 
         # TODO: DANGEROUS COMMENT
-        #glEnable(GL_DEPTH_TEST)
+        glEnable(GL_DEPTH_TEST)
 
         glClear(GL_DEPTH_BUFFER_BIT)
 
@@ -168,7 +170,7 @@ class Game:
             self.addAxis()
             glEndList()
         # end of light
-        return
+
 
         # display lists generate a contiguous set of empty display lists
         if debug:
@@ -181,16 +183,17 @@ class Game:
         self.drawBoardTop()
         glEndList()
 
-        self.initTextureBackground()
+
         glNewList(background, GL_COMPILE_AND_EXECUTE)
         self.drawBackground()
         glEndList()
-        self.endTextureBackground()
+
 
         glNewList(drawBorder, GL_COMPILE_AND_EXECUTE)
         # TODO: CAN BE REMOVED LATER (check the glGenLists length)
         self.drawBorder()
         glEndList()
+
         print "loading figures"
         # create objects
         temp = Pawn.Pawn(black, -1, -1, false)
@@ -257,6 +260,7 @@ class Game:
         glLoadIdentity()
         if self.modelview is not None:
             glLoadMatrixd(self.modelview)
+            glScale(1.0, 1.0, -1.0)
 
 
 
@@ -286,7 +290,7 @@ class Game:
 
         glBegin(GL_LINES)
         glVertex3f(0, 0, 0)
-        glVertex3f(-0.05, 0, 0)
+        glVertex3f(0.05, 0, 0)
         glEnd()
 
         # Draw y-axis line.
@@ -484,7 +488,6 @@ class Game:
         self.reshaping = True
         # set the view port with low left corner and width and height
         glViewport(0, 0, width, height)
-        #print "resize1"
         self.updateWindowShape(width, height)
 
         # specify which matrix is the current matrix
@@ -508,14 +511,11 @@ class Game:
 
         # replace the current matrix with the identity matrix
         glLoadIdentity()
-        #print "resize2"
         self.reshaping = False
 
     def redraw(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        #print glGetFloatv(GL_PROJECTION_MATRIX)
         self.drawBackground()
-        #self.setLookatMatrix()
 
         self.setGlProjection()
         self.setGlModelView()
@@ -523,13 +523,8 @@ class Game:
         self.beginRedraw()
 
 
-        #self.initTextureBackground()
 
-        #self.endTextureBackground()
-
-
-
-        #self.drawBoardTop()
+        self.drawBoardTop()
         glCallList(drawBorder)
         # if self.pieceChange == true:
         self.endRedraw()
@@ -725,36 +720,13 @@ class Game:
         if self.animationMode == 0:
             self.redraw()
 
-    def initTextureBackground(self):
-        if self.currentFrame is None and not self.newFrameArrived:
-            return
-
-        image = Image.fromarray(self.currentFrame)
-        ix = image.size[0]
-        iy = image.size[1]
-        image = image.tostring("raw", "BGRX", 0, -1)
-
-        glEnable(GL_TEXTURE_2D)
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-
-    def endTextureBackground(self):
-        #glDisable(GL_TEXTURE_2D)
-        print "bla"
-        #self.newFrameArrived = False
 
     def drawBackground(self):
         """  Draw background image using a quad. """
         if self.newFrameArrived and not self.reshaping:
             imgHeight, imgwidth, _ = self.currentFrame.shape
             if imgHeight == self.height and imgwidth == self.width:
+                glDisable(GL_DEPTH_TEST)
                 glMatrixMode(GL_MODELVIEW)
                 glPushMatrix()
                 glLoadIdentity()
@@ -786,6 +758,7 @@ class Game:
                 glPopMatrix()
                 glMatrixMode(GL_MODELVIEW)
                 glPopMatrix()
+                glEnable(GL_DEPTH_TEST)
             #self.newFrameArrived = False
 
 
@@ -999,7 +972,7 @@ class Game:
         argv = glutInit(sys.argv)
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL)  # GLUT_ALPHA missing
         glutInitWindowPosition(20, 20)
-        glutInitWindowSize(600, 500)
+        glutInitWindowSize(640, 480)
         glutCreateWindow("Augmented Reality Chess")
 
         glutDisplayFunc(self.redraw)
