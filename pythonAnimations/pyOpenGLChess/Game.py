@@ -59,7 +59,7 @@ class Game:
     
     self.array = { 'Piece': {}, 'Piece': {}}
     
-    self.clickedCoordinates = (-10.0,-10.0,-10.0)
+    self.clickedCoordinates = (-10.0, -10.0,- 10.0)
                        
   
   def init (self, width, height):
