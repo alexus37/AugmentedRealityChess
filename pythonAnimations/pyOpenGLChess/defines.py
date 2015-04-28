@@ -79,6 +79,8 @@ background = 80
 debug = 99
 
 # for game:
-blockSize = 0.7
+blockSize = 0.025
+meshScale = 0.064
+figureScale = blockSize * meshScale
 standardFactor = (blockSize/5.6)*6/7
 

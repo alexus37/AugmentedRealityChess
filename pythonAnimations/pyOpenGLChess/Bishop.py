@@ -10,6 +10,7 @@ from openGLFunctions import set_color
 import Piece
 
 
+
 # noinspection PyPep8Naming
 class Bishop(Piece.Piece):
     def __init__(self, c, x, y, useobj):
@@ -51,7 +52,7 @@ class Bishop(Piece.Piece):
                 elif self.color == black and not self.useObj:
                     glCallList(drawBlackBishop)
                 elif self.useObj:
-                    glScalef(0.04, 0.04, 0.04)
+                    glScalef(figureScale, figureScale, figureScale)
                     set_color(self.color, normal)
                     glCallList(self.obj.gl_list)
                 else:
@@ -69,7 +70,7 @@ class Bishop(Piece.Piece):
 
     def drawMe(self, drawMode):
         if self.useObj == true:
-            glScalef(0.04, 0.04, 0.04)
+            glScalef(figureScale, figureScale, figureScale)
             set_color(self.color, drawMode)
             glCallList(self.obj.gl_list)
         else:
