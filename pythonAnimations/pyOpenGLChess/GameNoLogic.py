@@ -808,7 +808,30 @@ class Game:
             self.rotation[1] += (x - self.mouse[0]) / 85
             # mark the current window as needing to be redisplayed
             glutPostRedisplay()
+    def handleIRInput(self, x, y):
+        model = glGetDoublev(GL_MODELVIEW_MATRIX)
+        proj = glGetDoublev(GL_PROJECTION_MATRIX)
+        view = glGetIntegerv(GL_VIEWPORT)
+        z = glReadPixelsf(x, view[3] - y - 1, 1, 1, GL_DEPTH_COMPONENT)
+        self.clickedCoordinates = gluUnProject(x, view[3] - y - 1, z[0][0], model, proj, view)
+        print "try to detect square id at (" + str(x) + ", " + str(y) + ")"
+        print "clicked Coords in worldspace = (" + str(self.clickedCoordinates[0]) + ", " + str(
+            self.clickedCoordinates[1]) + ", " + str(self.clickedCoordinates[2]) + ")"
+        chessid = self.handleClick()
+        if chessid != "":
+            print "clicked chess ID = " + chessid
+        else:
+            print "No chess patch found"
+        if self.madeMove:
+            if self.sunfish.setMove(self.activePiece):
+                self.setMove(self.activePiece)
+                self.redraw()
+                engMove = self.sunfish.computeNextStep()
+                self.setMove(engMove)
+                self.redraw()
 
+            self.madeMove = False
+            self.activePiece = ""
 
     # handle clicks and scrolling
     def mouse_pressed(self, button, state, x, y):
