@@ -74,6 +74,7 @@ class Game:
         self.debug = true
         self.currentFrame = None
         self.newFrameArrived = False
+        self.currentHand = None
 
         self.projection = None
         self.modelview = None
@@ -672,6 +673,9 @@ class Game:
         # if self.pieceChange == true:
         self.endRedraw()
 
+        # draw the hand
+        self.drawHand()
+
 
     def drawAnim(self):
         # start to redraw the scene
@@ -936,36 +940,41 @@ class Game:
                 glLoadIdentity()
                 glMatrixMode(GL_PROJECTION)
                 glPushMatrix()
-                #print "Happy printings1"
-                #glMatrixMode(GL_MODELVIEW)
-                #glLoadIdentity()
-
-                #print "Happy printings"
                 glLoadIdentity()
-                #print "Happy printings"
                 glOrtho(0, self.width, 0, self.height, -1.0, 1.0)
-                #print "Happy printings"
                 glViewport(0, 0, self.width, self.height)
-                #print "Happy printings"
                 glDisable(GL_TEXTURE_2D)
                 glPixelZoom(1, -1)
                 glRasterPos3f(0, self.height-0.5, -1)
-                #print "Happy printings5"
                 glDrawPixels(self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, self.currentFrame)
-                #print "Happy printings6"
-                # glBegin(GL_QUADS)
-                # glTexCoord2f(0.0,0.0); glVertex3f(-4.0,-3.0,-10.0)
-                # glTexCoord2f(1.0,0.0); glVertex3f( 4.0,-3.0,-10.0)
-                # glTexCoord2f(1.0,1.0); glVertex3f( 4.0, 3.0,-10.0)
-                # glTexCoord2f(0.0,1.0); glVertex3f(-4.0, 3.0,-10.0)
-                # glEnd()
                 glPopMatrix()
                 glMatrixMode(GL_MODELVIEW)
                 glPopMatrix()
                 glEnable(GL_DEPTH_TEST)
             #self.newFrameArrived = False
 
-
+    def drawHand(self):
+        if self.currentHand is not None:
+            glDisable(GL_DEPTH_TEST)
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            glMatrixMode(GL_MODELVIEW)
+            glPushMatrix()
+            glLoadIdentity()
+            glMatrixMode(GL_PROJECTION)
+            glPushMatrix()
+            glLoadIdentity()
+            glOrtho(0, self.width, 0, self.height, -1.0, 1.0)
+            glViewport(0, 0, self.width, self.height)
+            glDisable(GL_TEXTURE_2D)
+            glPixelZoom(1, -1)
+            glRasterPos3f(0, self.height-0.5, -1)
+            glDrawPixels(self.width, self.height, GL_RGBA, GL_UNSIGNED_BYTE, self.currentHand)
+            glPopMatrix()
+            glMatrixMode(GL_MODELVIEW)
+            glPopMatrix()
+            glDisable(GL_BLEND)
+            glEnable(GL_DEPTH_TEST)
 
 
     def drawBoardBottom(self):
