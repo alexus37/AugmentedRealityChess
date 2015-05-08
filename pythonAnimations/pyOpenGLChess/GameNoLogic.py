@@ -3,6 +3,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import math, sys, time
+from pandas.core.reshape import wide_to_long
 
 from defines import *
 from openGLFunctions import *
@@ -34,7 +35,7 @@ class Game:
         self.showShadows = false
         # do animations
         self.doAnimation = false
-        self.animationMode = false
+        self.animationMode = True
 
         # use engine (basically two or one payer)
         self.useEngine = true
@@ -42,7 +43,7 @@ class Game:
         # init the engine
         self.sunfish = engineSunfish()
 
-        self.camPos = [0, 0, 10]
+        self.camPos = [0, 0, 0.5]
         self.up = [0, 1, 0]
         self.lookAt = [0, 0, 0]
 
@@ -55,7 +56,7 @@ class Game:
         self.rotation = [0.0, 0.0]  # x and z rotation
         self.turn = white
 
-        self.light = [1.6, 1.3, 7, 0.8]  # light position
+        self.light = [0.6, 0.3, 1., 0.8]  # light position
         epsilon = -0.02
         self.matrixForShadow = (
             epsilon + self.light[2], 0, 0, 0, 0, epsilon + self.light[2], 0, 0, -self.light[0], -self.light[1], epsilon,
@@ -86,6 +87,11 @@ class Game:
         self.clickedCoordinates = (-10.0, -10.0, -10.0)
         self.activePiece = ""
         self.madeMove = False
+        self.numberTexture = "numbers.png"
+        self.abcTexture = "abc.png"
+        self.whiteKillPos = [- 6 * blockSize, - 5 * blockSize]
+        self.blackKillPos = [6 * blockSize, 5 * blockSize]
+        self.turn = white
 
     def handleClick(self):
         curChessID = ""
@@ -111,115 +117,6 @@ class Game:
         return curChessID
 
 
-                # # if not yet chose a piece
-                #     if ((self.activePiece == None) and (self.checkmate == false)):
-                #         self.checkmate = false
-                #         if ((self.array[i + 1, j + 1] != emptyPiece) and (
-                #                     self.array[i + 1, j + 1].color == self.turn)):  # and (self.chosenBlock == [-1,-1])):
-                #             self.chosenBlock = [i + 1, j + 1]
-                #             self.activePiece = self.array[i + 1, j + 1]
-                #             if (self.activePiece.type == king):
-                #                 self.possibleMoves = self.activePiece.safeMoves(self.array)
-                #             else:
-                #                 self.possibleMoves = self.activePiece.moves(self.array)
-                #     # if already chosed a piece
-                #     elif (self.checkmate == false):
-                #         self.checkmate = false
-                #         #if this chosen piece was selected:
-                #         if ((i + 1 == self.activePiece.pos[0]) and (j + 1 == self.activePiece.pos[1])):
-                #             #remove marking:
-                #             self.clickedCoordinates = [-10, -10, -10]
-                #             self.mouse = [-1.0, -1.0]
-                #             self.chosenBlock = [-1, -1]
-                #             self.activePiece = None
-                #             self.possibleMoves = []
-                #         elif ((i + 1 == self.activePiece.pos[0]) and (j + 1 == self.activePiece.pos[1])):
-                #             # do nothing:
-                #             nothing = 0
-                #         #if a possible move of the active piece was selected
-                #         elif ((i + 1, j + 1) in self.possibleMoves):
-                #             # castling:
-                #             self.doingCastling = false
-                #             if (self.activePiece.type == king):
-                #                 if ((self.activePiece.pos[0] - (i + 1) == 2) or (self.activePiece.pos[0] - (i + 1) == -2)):
-                #                     self.doingCastling = true
-                #                     # print ("castling")
-                #                 else:
-                #                     self.doingCastling = false
-                #             else:
-                #                 self.doingCastling = false
-                #                 self.checkForPieceChange(i + 1, j + 1)
-                #             #move:
-                #             if self.doAnimation == 1:
-                #                 self.animationMode = 1
-                #                 self.move(i + 1, j + 1, self.doingCastling)
-                #                 self.animationMode = 0
-                #             else:
-                #                 if (self.doingCastling == true):
-                #                     self.undo.rememberUndo(self.activePiece, i + 1, j + 1, self.array, castlingOn)
-                #                 elif (self.pieceChange == true):
-                #                     self.undo.rememberUndo(self.activePiece, i + 1, j + 1, self.array, changePawnOn)
-                #                 elif ((self.activePiece.type == king) and (self.activePiece.moved == false)):
-                #                     self.undo.rememberUndo(self.activePiece, i + 1, j + 1, self.array, kingFirstMove)
-                #                 else:
-                #                     self.undo.rememberUndo(self.activePiece, i + 1, j + 1, self.array, false)
-                #
-                #                 self.array[self.activePiece.pos[0], self.activePiece.pos[1]] = emptyPiece
-                #                 # move:
-                #                 abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-                #                 oldX = abc[self.activePiece.pos[0] - 1]
-                #                 oldY = self.activePiece.pos[1]
-                #                 newX = abc[(i + 1) - 1]
-                #                 newY = (j + 1)
-                #                 curMove = oldX + str(oldY) + newX + str(newY)
-                #                 print "Move = %s%d%s%d" % (oldX, oldY, newX, newY)
-                #
-                #                 self.activePiece.pos[0] = i + 1
-                #                 self.activePiece.pos[1] = j + 1
-                #                 if self.array[i + 1, j + 1] != emptyPiece:
-                #                     self.array[i + 1, j + 1].kill()
-                #                 self.array[i + 1, j + 1] = self.activePiece
-                #
-                #                 if (self.doingCastling == true):
-                #                     # move rook:
-                #                     if (i + 1 == 7):
-                #                         self.array[i + 2, j + 1].pos[0] = i
-                #                         self.array[i, j + 1] = self.array[i + 2, j + 1]
-                #                         self.array[i + 2, j + 1] = emptyPiece
-                #                     elif (i + 1 == 3):
-                #                         self.array[i - 1, j + 1].pos[0] = i + 2
-                #                         self.array[i + 2, j + 1] = self.array[i - 1, j + 1]
-                #                         self.array[i - 1, j + 1] = emptyPiece
-                #
-                #             if (self.pieceChange == true):
-                #                 self.chosenBlock = [i + 1, j + 1]
-                #             if (self.activePiece != None):
-                #                 self.activePiece.moved = true
-                #
-                #             if (self.pieceChange == false):
-                #                 self.toggleTurn()
-                #
-                #                 #remove markings:
-                #                 self.chosenBlock = [-1, -1]
-                #                 self.clickedCoordinates = [-10, -10, -10]
-                #                 self.mouse = [-1.0, -1.0]
-                #                 self.activePiece = None
-                #                 self.checkForCheck()
-                #
-                #             self.possibleMoves = []
-                #
-                #         #choose new piece:
-                #         elif ((self.array[i + 1, j + 1] != emptyPiece) and (
-                #                     self.array[i + 1, j + 1].color == self.turn)):  #and (self.chosenBlock == [-1,-1])):
-                #             self.chosenBlock = [i + 1, j + 1]
-                #             self.activePiece = self.array[i + 1, j + 1]
-                #             if (self.activePiece.type == king):
-                #                 self.possibleMoves = self.activePiece.safeMoves(self.array)
-                #             else:
-                #                 self.possibleMoves = self.activePiece.moves(self.array)
-                #
-                #
-                # return curMove
 
 
     def init(self, width, height):
@@ -391,12 +288,17 @@ class Game:
             glLoadMatrixd(self.projection)
 
 
+
+
+
     def setGlModelView(self):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         if self.modelview is not None:
             glLoadMatrixd(self.modelview)
             glScale(1.0, 1.0, -1.0)
+        else:
+            self.setLookatMatrix()
 
 
 
@@ -627,6 +529,13 @@ class Game:
 
 
     def reshape(self, width, height):
+        if width != self.width:
+            height = int(width * 0.75)
+        if height != self.height:
+            width = int(height * 4 / 3)
+
+        glutReshapeWindow(width, height)
+
         self.reshaping = True
         # set the view port with low left corner and width and height
         glViewport(0, 0, width, height)
@@ -653,6 +562,8 @@ class Game:
 
         # replace the current matrix with the identity matrix
         glLoadIdentity()
+        self.width = width
+        self.height = height
         self.reshaping = False
 
 
@@ -828,9 +739,11 @@ class Game:
             print "No chess patch found"
         if self.madeMove:
             if self.sunfish.setMove(self.activePiece):
+                self.turn = white
                 self.setMove(self.activePiece)
                 self.redraw()
                 engMove = self.sunfish.computeNextStep()
+                self.turn = black
                 self.setMove(engMove)
                 self.redraw()
 
@@ -859,9 +772,11 @@ class Game:
             print "clicked chess ID = " + chessid
             if self.madeMove:
                 if self.sunfish.setMove(self.activePiece):
+                    self.turn = white
                     self.setMove(self.activePiece)
                     self.redraw()
                     engMove = self.sunfish.computeNextStep()
+                    self.turn = black
                     self.setMove(engMove)
                     self.redraw()
 
@@ -870,27 +785,19 @@ class Game:
 
 
         # handle scroll event
-        elif button == 3 or button == 4:
+        if button == 3 or button == 4:
+
             if state == GLUT_UP:
                 return
 
             if button == 3:
                 self.zoom -= 1
-                glMatrixMode(GL_PROJECTION)
-                glLoadIdentity()
-                gluPerspective(self.zoom, self.width / self.height, 0.1, 100.0)
-                glMatrixMode(GL_MODELVIEW)
                 self.redraw()
             else:
                 self.zoom += 1
-                glMatrixMode(GL_PROJECTION)
-                glLoadIdentity()
-                gluPerspective(self.zoom, self.width / self.height, 0.1, 100.0)
-                glMatrixMode(GL_MODELVIEW)
                 self.redraw()
 
-        elif (button == GLUT_LEFT_BUTTON) and (state == GLUT_UP):
-            return
+
 
 
     def processMenuEvents(self, option):
@@ -1050,16 +957,47 @@ class Game:
         oldY = int(move[1])
         newX = abc.index(move[2]) + 1
         newY = int(move[3])
+        if not self.doAnimation:
+            self.activePiece = self.array[oldX, oldY]
 
-        self.activePiece = self.array[oldX, oldY]
+            # only turkis color is enabled if
 
-        # only turkis color is enabled if
-        self.turn = 30
-        self.activePiece.pos[0] = newX
-        self.activePiece.pos[1] = newY
-        if self.array[newX, newY] != emptyPiece:
-            self.array[newX, newY].kill()
-        self.array[newX, newY] = self.activePiece
+            self.activePiece.pos[0] = newX
+            self.activePiece.pos[1] = newY
+            if self.array[newX, newY] != emptyPiece:
+                #if self.turn == white:
+                self.array[newX, newY].pos[0] = self.whiteKillPos[0]
+                self.array[newX, newY].pos[1] = self.whiteKillPos[1]
+                self.whiteKillPos[1] += 1
+                #else:
+                #    self.array[newX, newY].pos[0] = self.blackKillPos[0]
+                #    self.array[newX, newY].pos[1] = self.blackKillPos[1]
+                #    self.blackKillPos[1] -= blockSize
+
+            self.array[newX, newY] = self.activePiece
+            self.array[oldX, oldY] = emptyPiece
+        else:
+
+            steps = 6
+            dirVec = np.array([(newX - oldX) / float(steps), (newY - oldY) / float(steps)])
+            curStep = 0
+
+
+            self.activePiece = self.array[oldX, oldY]
+            print "direction " + str(dirVec)
+            while curStep < steps:
+                print "step " + str(curStep) + " of " + str(steps)
+                print self.activePiece.pos
+                self.activePiece.pos[0] = self.activePiece.pos[0] + dirVec[0]
+                self.activePiece.pos[1] = self.activePiece.pos[1] + dirVec[1]
+                self.redraw()
+                curStep += 1
+
+            self.activePiece.pos[0] = newX
+            self.activePiece.pos[1] = newY
+            if self.array[newX, newY] != emptyPiece:
+                self.array[newX, newY].kill()
+            self.array[newX, newY] = self.activePiece
 
 
     @staticmethod
@@ -1089,54 +1027,112 @@ class Game:
                 glEnd()
 
 
-    @staticmethod
-    def drawBorder():
-        glMaterialfv(GL_FRONT, GL_AMBIENT, [0.4, 0.4, 0.5, 0])
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.5, 0.5, 0.5, 0])
-        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.0, 0])
+
+    def drawBorder(self):
+        glEnable(GL_TEXTURE_2D)
+        texNumbers = pygame.image.load(self.numberTexture)
+        glNumTex = pygame.image.tostring(texNumbers, "RGBA", 1)
+
+        ix, iy = texNumbers.get_rect().size
+
+        # bind the texture
+        glEnable(GL_TEXTURE_2D)
+        self.BGTEXID = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, self.BGTEXID)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, glNumTex)
+
+        # glColor3d(0.95, 0.05, 0.05)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, [1, 1, 1, 0])
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.1, 0.1, 0.1, 0])
+        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.1, 0.1, 0.1, 0])
+
 
         # extension for shadow:
+        # left and right
         glBegin(GL_POLYGON)
         glNormal3d(0, 0, 1)
-        glVertex3f(-4.5 * blockSize, -4.5 * blockSize, -0)
+        glTexCoord2f(0, 0)
+        glVertex3f(-5 * blockSize, -5 * blockSize, -0)
         glNormal3d(0, 0, 1)
-        glVertex3f(-4.5 * blockSize, 4.5 * blockSize, -0)
+        glTexCoord2f(0, 1)
+        glVertex3f(-5 * blockSize, 5 * blockSize, -0)
         glNormal3d(0, 0, 1)
-        glVertex3f(-4 * blockSize, 4.5 * blockSize, -0)
+        glTexCoord2f(1, 1)
+        glVertex3f(-4 * blockSize, 5 * blockSize, -0)
         glNormal3d(0, 0, 1)
-        glVertex3f(-4 * blockSize, -4.5 * blockSize, -0)
+        glTexCoord2f(1, 0)
+        glVertex3f(-4 * blockSize, -5 * blockSize, -0)
         glEnd()
+
+
         glBegin(GL_POLYGON)
         glNormal3d(0, 0, 1)
-        glVertex3f(-4 * blockSize, -4.5 * blockSize, -0)
+        glTexCoord2f(1, 0)
+        glVertex3f(5 * blockSize, -5 * blockSize, -0)
         glNormal3d(0, 0, 1)
-        glVertex3f(4 * blockSize, -4.5 * blockSize, -0)
+        glTexCoord2f(1, 1)
+        glVertex3f(5 * blockSize, 5 * blockSize, -0)
         glNormal3d(0, 0, 1)
+        glTexCoord2f(0, 1)
+        glVertex3f(4 * blockSize, 5 * blockSize, -0)
+        glNormal3d(0, 0, 1)
+        glTexCoord2f(0, 0)
+        glVertex3f(4 * blockSize, -5 * blockSize, -0)
+        glEnd()
+
+
+        # clear the texture
+        glDeleteTextures(self.BGTEXID)
+
+        texNumbers = pygame.image.load(self.abcTexture)
+        glNumTex = pygame.image.tostring(texNumbers, "RGBA", 1)
+
+        ix, iy = texNumbers.get_rect().size
+
+        # bind the texture
+        self.BGTEXID = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, self.BGTEXID)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, glNumTex)
+
+
+        glBegin(GL_POLYGON)
+        glNormal3d(0, 0, 1)
+        glTexCoord2f(0, 0)
+        glVertex3f(-4 * blockSize, -5 * blockSize, -0)
+        glNormal3d(0, 0, 1)
+        glTexCoord2f(1, 0)
+        glVertex3f(4 * blockSize, -5 * blockSize, -0)
+        glNormal3d(0, 0, 1)
+        glTexCoord2f(1, 1)
         glVertex3f(4 * blockSize, -4 * blockSize, -0)
         glNormal3d(0, 0, 1)
+        glTexCoord2f(0, 1)
         glVertex3f(-4 * blockSize, -4 * blockSize, -0)
         glEnd()
+
         glBegin(GL_POLYGON)
         glNormal3d(0, 0, 1)
-        glVertex3f(4.5 * blockSize, -4.5 * blockSize, -0)
+        glTexCoord2f(0, 1)
+        glVertex3f(-4 * blockSize, 5 * blockSize, -0)
         glNormal3d(0, 0, 1)
-        glVertex3f(4.5 * blockSize, 4.5 * blockSize, -0)
+        glTexCoord2f(1, 1)
+        glVertex3f(4 * blockSize, 5 * blockSize, -0)
         glNormal3d(0, 0, 1)
-        glVertex3f(4 * blockSize, 4.5 * blockSize, -0)
-        glNormal3d(0, 0, 1)
-        glVertex3f(4 * blockSize, -4.5 * blockSize, -0)
-        glEnd()
-        glBegin(GL_POLYGON)
-        glNormal3d(0, 0, 1)
-        glVertex3f(-4 * blockSize, 4.5 * blockSize, -0)
-        glNormal3d(0, 0, 1)
-        glVertex3f(4 * blockSize, 4.5 * blockSize, -0)
-        glNormal3d(0, 0, 1)
+        glTexCoord2f(1, 0)
         glVertex3f(4 * blockSize, 4 * blockSize, -0)
         glNormal3d(0, 0, 1)
+        glTexCoord2f(0, 0)
         glVertex3f(-4 * blockSize, 4 * blockSize, -0)
         glEnd()
 
+        # clear the texture
+        glDeleteTextures(self.BGTEXID)
+
+        glDisable(GL_TEXTURE_2D)
 
     # draw all figures
     def drawPieces(self):

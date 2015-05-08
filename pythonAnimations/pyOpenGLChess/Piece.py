@@ -14,7 +14,7 @@ class Piece:
     self.color = c
     self.type = t
     self.life = alive
-    self.pos = [x,y]
+    self.pos = [x, y]
     self.headRadius = 0
     self.radius1 = 0
     self.height1 = 0
