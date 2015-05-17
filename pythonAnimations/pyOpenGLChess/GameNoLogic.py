@@ -3,8 +3,6 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import math, sys, time
-from pandas.core.reshape import wide_to_long
-
 from defines import *
 from openGLFunctions import *
 
@@ -83,6 +81,7 @@ class Game:
         self.array = {'Piece': {}, 'Piece': {}}
         self.height = 480
         self.width = 640
+        self.flip = 0
 
         self.clickedCoordinates = (-10.0, -10.0, -10.0)
         self.activePiece = ""
@@ -296,7 +295,10 @@ class Game:
         glLoadIdentity()
         if self.modelview is not None:
             glLoadMatrixd(self.modelview)
-            glScale(1.0, 1.0, -1.0)
+            print self.flip
+            if self.flip == 0:
+                glScale(1.0, 1.0, -1.0)
+
         else:
             self.setLookatMatrix()
 
@@ -861,7 +863,9 @@ class Game:
             #self.newFrameArrived = False
 
     def drawHand(self):
+        print "draw hand "
         if self.currentHand is not None:
+            print "draw hand for real"
             glDisable(GL_DEPTH_TEST)
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
