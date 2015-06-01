@@ -86,12 +86,15 @@ class Game:
         self.clickedCoordinates = (-10.0, -10.0, -10.0)
         self.activePiece = ""
         self.madeMove = False
+        self.inputIR = False
         self.numberTexture = "numbers.png"
         self.abcTexture = "abc.png"
         self.whiteKillPos = [- 6 * blockSize, - 5 * blockSize]
         self.blackKillPos = [6 * blockSize, 5 * blockSize]
         self.turn = white
 
+
+    # self.clickedCoordinates are x and y (plane coordinates) [x = 0, y = 1]
     def handleClick(self):
         curChessID = ""
         abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
@@ -295,7 +298,7 @@ class Game:
         glLoadIdentity()
         if self.modelview is not None:
             glLoadMatrixd(self.modelview)
-            print self.flip
+
             if self.flip == 0:
                 glScale(1.0, 1.0, -1.0)
 
@@ -570,24 +573,19 @@ class Game:
 
 
     def redraw(self):
+        if self.inputIR:
+            self.handleClick()
+            self.inputIR = false
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         self.drawBackground()
-
         self.setGlProjection()
         self.setGlModelView()
-
-
         self.beginRedraw()
-
-
-
         self.drawBoardTop()
         glCallList(drawBorder)
         # if self.pieceChange == true:
         self.endRedraw()
-
-        # draw the hand
-        self.drawHand()
 
 
     def drawAnim(self):
@@ -597,7 +595,6 @@ class Game:
         glCallList(boardTopAnim)
         # Todo: can be removed
         glCallList(drawBorder)
-
         self.endRedraw()
 
 
@@ -605,7 +602,6 @@ class Game:
         # clear buffers to preset values
         # GL_COLOR_BUFFER_BIT: Indicates the buffers currently enabled for color writing.
         # GL_DEPTH_BUFFER_BIT: Indicates the depth buffer.
-
 
         # load a identity matrix
         # glLoadIdentity()
@@ -670,7 +666,8 @@ class Game:
 
         # draw all pieces
         self.drawPieces()
-
+        # draw the hand
+        self.drawHand()
         glutSwapBuffers()
         glFlush()
 
@@ -785,7 +782,6 @@ class Game:
                 self.madeMove = False
                 self.activePiece = ""
 
-
         # handle scroll event
         if button == 3 or button == 4:
 
@@ -798,9 +794,6 @@ class Game:
             else:
                 self.zoom += 1
                 self.redraw()
-
-
-
 
     def processMenuEvents(self, option):
         if option == 0:
@@ -863,9 +856,7 @@ class Game:
             #self.newFrameArrived = False
 
     def drawHand(self):
-        print "draw hand "
         if self.currentHand is not None:
-            print "draw hand for real"
             glDisable(GL_DEPTH_TEST)
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
