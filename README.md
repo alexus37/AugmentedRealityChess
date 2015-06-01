@@ -1,4 +1,4 @@
-﻿# AugmentedRealityChess
+# AugmentedRealityChess
 The goal of this project is to create a augmented reality board game
 ## How to run the Kinect on Ubuntu 14.04 
 
@@ -55,13 +55,7 @@ The packages can be installed using a terminal and the following commands or by 
 
 #### Getting OpenCV Source Code
 
-You can use the latest stable OpenCV version or you can grab the latest snapshot from our Git repository.
-
-Getting the Latest Stable OpenCV Version
-Go to our downloads page.
-Download the source archive and unpack it.
-Getting the Cutting-edge OpenCV from the Git Repository
-Launch Git client and clone OpenCV repository. If you need modules from OpenCV contrib repository then clone it too.
+You can use the OpenCV versio 2.4.9.
 
 For example
 
@@ -69,11 +63,11 @@ For example
 `git clone https://github.com/Itseez/opencv.git`   
 `git clone https://github.com/Itseez/opencv_contrib.git`  
 
-####Building OpenCV from Source Using CMake
+####Building OpenCV 2.4.9 from Source Using CMake
 
 1. Create a temporary directory, which we denote as <cmake_build_dir>, where you want to put the generated Makefiles, project files as well the object files and output binaries and enter there.
 For example  
-`cd ~/opencv`  
+`cd ~/opencv2.4.9`  
 `mkdir build`  
 `cd build`  
 2. Configuring. Run cmake [some optional parameters] path to the OpenCV source directory  
@@ -102,3 +96,90 @@ For example
 `make -j7 # runs 7 jobs in parallel`   
 
 6. `sudo make install`
+
+### Install Ros
+1. Installation  
+1.1. Configure your Ubuntu repositories Configure your Ubuntu repositories to allow "restricted," "universe," and "multiverse." You can follow the Ubuntu guide for instructions on doing this.  
+1.2. Setup your sources.list
+Setup your computer to accept software from packages.ros.org. ROS Jade ONLY supports Trusty (14.04), Utopic (14.10) and Vivid (15.04) for debian packages.`sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list`  
+1.3. Set up your keys
+`sudo apt-key adv --keyserver hkp://pool.sks-keyservers.net --recv-key 0xB01FA116`  
+1.4. Installation
+ First, make sure your Debian package index is up-to-date:
+`sudo apt-get update`
+If you are using Ubuntu Trusty **14.04.2** and experience dependency issues during the ROS installation, you may have to install some additional system dependencies.
+**/!\ Do not install these packages if you are using 14.04, it will destroy your X server:**
+`sudo apt-get install xserver-xorg-dev-lts-utopic mesa-common-dev-lts-utopic libxatracker-dev-lts-utopic libopenvg1-mesa-dev-lts-utopic libgles2-mesa-dev-lts-utopic libgles1-mesa-dev-lts-utopic libgl1-mesa-dev-lts-utopic libgbm-dev-lts-utopic libegl1-mesa-dev-lts-utopic`
+**/!\ Do not install the above packages if you are using 14.04, it will destroy your X server**
+Alternatively, try installing just this to fix dependency issues:
+`sudo apt-get install libgl1-mesa-dev-lts-utopic`
+Desktop-Full Install: (Recommended) : ROS, rqt, rviz, robot-generic libraries, 2D/3D simulators, navigation and 2D/3D perception
+sudo apt-get install ros-jade-desktop-full
+or click here
+Desktop Install: ROS, rqt, rviz, and robot-generic libraries
+`sudo apt-get install ros-jade-desktop`
+ROS-Base: (Bare Bones) ROS package, build, and communication libraries. No GUI tools.
+`sudo apt-get install ros-jade-ros-base`
+Individual Package: You can also install a specific ROS package (replace underscores with dashes of the package name):
+`sudo apt-get install ros-jade-PACKAGE`
+e.g.
+`sudo apt-get install ros-jade-slam-gmapping`
+To find available packages, use:
+`apt-cache search ros-jade`   
+1.5. Initialize rosdep
+Before you can use ROS, you will need to initialize rosdep. rosdep enables you to easily install system dependencies for source you want to compile and is required to run some core components in ROS.
+`sudo rosdep init
+rosdep update`  
+1.6. Environment setup
+It's convenient if the ROS environment variables are automatically added to your bash session every time a new shell is launched:
+
+`echo "source /opt/ros/jade/setup.bash" >> ~/.bashrc
+source ~/.bashrc`
+If you have more than one ROS distribution installed, ~/.bashrc must only source the setup.bash for the version you are currently using.
+
+If you just want to change the environment of your current shell, you can type:
+
+`source /opt/ros/jade/setup.bash`  
+1.7. Getting rosinstall
+rosinstall is a frequently used command-line tool in ROS that is distributed separately. It enables you to easily download many source trees for ROS packages with one command.
+
+To install this tool on Ubuntu, run:
+
+`sudo apt-get install python-rosinstall`
+Build farm status
+The packages that you installed were built by ROS build farm. 
+
+### Install PyOpenGL
+To be able to run the animations you new to have PyOpenGL, the quickest way to install it 
+is using pip   
+`$ pip install PyOpenGL PyOpenGL_accelerate`
+
+
+### Set up Augmented Reality Chess
+To run the source code properly a specific file structure is needed.      
+
+1. Create a catkin workspace `cd ~; mkdir ~/catkin_ws`
+2. Clone the ros part of the implementation in this directory `git clone https://github.com/alexus37/ROSARCHESS.git`
+3. Switch to branch "video" : `git branch aruco`
+4. Clone the rendering part in an arbitary folder and link the path in the file catkin\_ws/src/kinect_io/scripts/listener.py `git clone https://github.com/alexus37/AugmentedRealityChess.git`
+5. Switch to branch "video" : `git branch video`
+6. Calibrate the Kinect RGB camera using the ros calibration node: http://wiki.ros.org/camera_calibration. A valid option is use factory camera calibration, which is accurate enough. It should be set by default.
+7. (Optional) Calibrate the IR camera either by either trying stereo calibration. You can the paste the resulting camera matrix and transformation between the two cameras to the right place in catkin\_ws/src/kinect_io/scripts/listener.py. See the file for details.
+
+
+### Run the game
+1. Set the following environment variables on your Ubuntu: 
+`export ROS_MASTER_URI=http://192.168.1.4:11311/`
+`export ROS_IP=192.168.1.12`
+2. Run the roscore `roscore`
+3. Open a new terminal and run openNi to be able to extract images from the Kinect `roslaunch openni_launch openni.launch
+4. Open the `single_board_kinect_occlusion.launch` file and set the correct paths to the checkerboard configuration and dictionary files. You can find them in `kinect_io/data`
+4. Open a new terminal and run ros ar\_sys to be able to track the markers `roslaunch ar_sys single_board_kinect_occlusion.launch`
+4. Connect via ssh to the Odroid with thermal camera: `shh px4@192.168.1.2`.
+5. Also run the roscore on the IR cam `roscore`
+6. Run the command `/source .bashrc`
+6. Run the command `ros_px4`
+7. Launch the IR video stream publisher `rosrun leptonvideo leptonvideo` and press `1`
+8. Open a new terminal on your machine and run the listener `rosrun kinect_io listener.py`
+9. Enjoy the game.
+
