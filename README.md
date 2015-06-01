@@ -168,12 +168,13 @@ To run the source code properly a specific file structure is needed.
 
 
 ### Run the game
-0. Set the following environment variables on your Ubuntu: 
+1. Set the following environment variables on your Ubuntu: 
 `export ROS\_MASTER\_URI=http://192.168.1.4:11311/`
 `export ROS\_IP=192.168.1.12`
-1. Run the roscore `roscore`
-2. Open a new terminal and run openNi to be able to interact with the kinnect `roslaunch openni_launch openni.launch`
-3. Open a new terminal and run ros ar\_sys to be able to track the markers `roslaunch ar\_sys single\_board\_kinect\_occlusion.launch`
+2. Run the roscore `roscore`
+3. Open a new terminal and run openNi to be able to extract images from the Kinect `roslaunch openni_launch openni.launch
+4. Open the `single\_board\_kinect\_occlusion.launch` file and set the correct paths to the checkerboard configuration and dictionary files. You can find them in `kinect\_io/data`
+4. Open a new terminal and run ros ar\_sys to be able to track the markers `roslaunch ar\_sys single\_board\_kinect\_occlusion.launch`
 4. Connect via ssh to the Odroid with thermal camera: `shh px4@192.168.1.2`.
 5. Also run the roscore on the IR cam `roscore`
 6. Run the command `/source .bashrc`
